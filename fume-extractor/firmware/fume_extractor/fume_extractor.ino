@@ -21,7 +21,13 @@ static volatile uint32_t tachPulses = 0;
 
 static void IRAM_ATTR onTach() { tachPulses = tachPulses + 1; }
 
-static void applyFan() { ledcWrite(PIN_FAN_PWM, ctl->gateDuty8()); }
+// Off writes the full-scale value (1 << PWM_BITS), not 255: on an 8-bit channel 255 still leaves
+// 1/256 low time. (arduino-esp32 3.x already rounds 255 up to full scale; this doesn't rely on it.)
+static_assert(PWM_BITS == 8, "gateDuty8() is an 8-bit duty");
+static void applyFan() {
+  uint32_t duty = ctl->level() == 0 ? (1u << PWM_BITS) : ctl->gateDuty8();
+  ledcWrite(PIN_FAN_PWM, duty);
+}
 
 static void setTwist(fan::Rgb c) { if (twistOk) twist.setColor(c.r, c.g, c.b); }
 
@@ -39,6 +45,7 @@ static void draw(uint32_t rpm, bool stall, bool dim) {
     if (ctl->level() == 0) snprintf(buf, sizeof buf, "OFF");
     else snprintf(buf, sizeof buf, "%d%%", ctl->percent());
     centered(28, buf);
+    if (stall) centered(40, "FAN?");   // a stall must stay visible while dimmed
   } else {
     if (ctl->level() == 0) {
       oled.setFont(QW_FONT_31X48);   // letters only
