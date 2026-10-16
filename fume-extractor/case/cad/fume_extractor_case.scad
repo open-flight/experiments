@@ -1,12 +1,13 @@
 // =====================================================================
 //  USB-C desk fume extractor - printable case (parametric, OpenSCAD)
 //  Parts: shell (fan box + control pod), frame (magnetic filter grille),
-//         pod_lid (sloped control face), kickstand, knob
+//         pod_lid (sloped control face), base (tilt stand, alias "kickstand"), knob
 //
 //  Export a part:   openscad -D 'part="shell"' -o shell.stl fume_extractor_case.scad
-//  part = "assembly" | "exploded" | "shell" | "frame" | "pod_lid" | "kickstand" | "knob"
+//  part = "assembly" | "exploded" | "poses" | "shell" | "frame" | "pod_lid" | "base" | "knob"
 //  Fit checks (should all be empty):
-//         "chk_shell" | "chk_frame" | "chk_pod_lid" | "chk_kickstand" |
+//         "chk_shell" | "chk_frame" | "chk_pod_lid" | "chk_kickstand" (= base + screws vs the
+//         posed case at 0/15/30) |
 //         "chk_shell_frame" | "chk_shell_pod_lid" | "chk_desk" | "chk_ghosts"
 //  Area helpers (2D, use with --summary area): "area_rear_open" | "area_rear_total" |
 //         "area_front_open" | "area_front_total"
@@ -18,7 +19,7 @@
 
 part = "assembly";
 show_components = true;     // ghost parts in assembly/exploded views
-kick_view_deg = 15;         // which detent the assembly view shows (0, 15 or 30)
+view_tilt = 1;              // which tilt the assembly view shows: index into tilts (0, 15, 30 deg)
 $fn = 48;
 
 // ---------- print / fit tolerances (PETG, 0.4 nozzle) ----------
@@ -33,7 +34,6 @@ m2_pilot   = 1.8;    // M2 self-tapping pilot into PETG
 // ---------- fan: Noctua NF-A12x25 5V PWM ----------
 fan        = [120, 25];      // [square, thickness]
 fan_hole_s = 105;            // hole spacing
-fan_hole_d = 4.3;
 fan_clr    = 0.3;            // pocket clearance per side
 fan_gap_f  = 2.0;            // air gap between filter and fan front (room for the M3 button heads)
 plenum     = 6.0;            // exhaust gap between fan back and grille (cable exit, insert pads)
@@ -45,6 +45,8 @@ rear_t     = 2.4;            // rear wall / grille thickness
 // ---------- filter + frame ----------
 filter     = [130, 10];      // [square, thickness] 948DQ-style carbon pad
 filter_clr = 0.5;            // recess clearance per side
+filter_crush = 1.0;          // recess is this much shallower than the pad: the frame compresses the
+                             // pad's edges onto the seal step, so a thin or worn pad still seals
 frame_t    = 4.0;
 frame_win  = 126;            // grille window (filter edges clamped 2 mm all round)
 front_hex  = 14.0;           // frame hex opening, across corners
@@ -62,7 +64,6 @@ W          = 146;            // width  (X)
 H          = 146;            // body height (Z), pod sits on top
 r_out      = 3.0;            // front-view corner radius
 wall       = 2.4;
-rock_c     = 8.0;            // 45-deg chamfer on the rear-bottom edge: the edge the case tips back on
 
 // ---------- control pod ----------
 pod_angle  = 30;             // front face normal points 30 deg above horizontal (toward the user)
@@ -102,34 +103,29 @@ proto_hole_in = 2.5;
 proto_standoff = 3.0;
 proto_parts_h = 15;  // tallest part incl. the mated fan plug
 
-// ---------- kickstand ----------
-kick_w     = 20;             // knuckle / leg width (X)
-kick_slot  = 20.4;           // slot in the shell
-kick_L     = 46;             // pivot to foot centre
-kick_rf    = 3.5;            // foot radius
-kick_arm_t = 4.0;
-kick_kink  = [12, 12];       // [length, angle] of the first leg segment (keeps it clear of the slot roof)
-piv_dy     = 10;             // pivot axis in front of the rear face
-piv_z      = 6;              // pivot axis height
-knuckle_r  = 4.4;
-bore_d     = 4.3;            // 4 mm shoulder
-seat_r     = 6.2;            // concave detent seat in the shell
-slot_clear_r = 4.8;
-spring_r   = [5.0, 6.0];     // detent spring arc (inner, outer)
-spring_a   = [180, 260];     // its angle span, local (0 = toward the foot)
-bump_a     = 186;
-bump_r     = 0.6;
-lug1_t     = 4.6;            // shoulder screw: 4 mm x 25 mm shoulder = lug1 + slot
-shoulder_l = 25;
-thread_l   = 5;
-nut_af     = 5.5; nut_t = 2.4;
-head_pocket = 34;            // room to slide the screw in along X
+// ---------- tilt base ----------
+// The case hangs between two cheeks of a base plate on M3 shoulder screws: one pivot screw and
+// one lock screw per side. The cheeks have 3 lock holes, so the case tilts FORWARD (intake aims
+// down at the work) by 0, 15 or 30 deg. The plate reaches well forward so the centre of mass
+// stays far inside the footprint at every tilt.
 tilts      = [0, 15, 30];
+piv        = [8, 8];         // pivot, in the shell's side walls: body (y, z)
+lock_r     = 25;             // lock-screw insert, this far behind the pivot (body)
+piv_h      = 15;             // pivot above the plate top (the frame's bottom edge clears the plate at 30 deg)
+base_t     = 4;
+base_reach = [75, 6];        // plate reach in front of the shell face / behind the rear face
+base_r     = 8;
+cheek_t    = 5;
+cheek_gap  = 1.0;            // cheek to shell side; shoulder length = cheek_t + cheek_gap
+cheek_r    = 7;
+shoulder   = [4.0, 6, 5];    // ISO 7379 shoulder screw: [shoulder d, shoulder length, M3 thread length]
+shoulder_bore = 4.3;
 
 // ---------- derived ----------
 cx = W/2; cz = H/2;                       // fan / filter centre (front view)
-D        = filter[1] + fan_gap_f + fan[1] + plenum + rear_t;
-fan_y0   = filter[1] + fan_gap_f;
+rec_d    = filter[1] - filter_crush;         // filter recess depth
+D        = rec_d + fan_gap_f + fan[1] + plenum + rear_t;
+fan_y0   = rec_d + fan_gap_f;
 fan_y1   = fan_y0 + fan[1];
 rear_in  = D - rear_t;
 pk       = fan[0] + 2*fan_clr;           // fan pocket
@@ -161,23 +157,19 @@ oled_cx = 80;  oled_cs = 24;
 tw_cx   = 118; tw_cs   = 26.7;
 lid_screws = [for (x=[wall + blk_w/2, W - wall - blk_w/2], s=lid_screw_s) [x, s]];
 
-// kickstand
-y_p  = D - piv_dy;  z_p = piv_z;
-y_E  = D - rock_c;                           // rock edge
-kx0  = cx - kick_w/2;
-sx0  = cx - kick_slot/2;  sx1 = cx + kick_slot/2;
-function leg_phi(th) = let(a = y_p - y_E)
-    th + acos((z_p*cos(th) - a*sin(th) - kick_rf)/kick_L);
-phis = [for (t = tilts) leg_phi(t)];
-// first leg segment touches the slot roof at the rear face when it rises this steeply:
-function roof_z(b) = z_p + piv_dy*tan(b) + (kick_arm_t/2)/cos(b);
-stop_b = [for (b=[0:0.1:40]) if (roof_z(b) <= z_p + slot_clear_r) b];
-stop_phi = 90 + max(stop_b) + kick_kink[1];
+// tilt base
+piv_zw   = base_t + piv_h;                    // pivot height above the desk
+lock_pt  = [piv[0] + lock_r, piv[1]];         // body (y, z)
+lock_holes = [for (t = tilts) [piv[0] + lock_r*cos(t), piv_zw + lock_r*sin(t)]];   // world (y, z), in the cheeks
+base_y0  = -base_reach[0];  base_y1 = D + base_reach[1];
+cheek_x  = [-cheek_gap - cheek_t, W + cheek_gap];
+// place the case (and anything in its body frame) at tilt th, forward-positive
+module pose(th) translate([0, piv[0], piv_zw]) rotate([th, 0, 0]) translate([0, -piv[0], -piv[1]]) children();
 
 echo(str("OUTER SIZE (mm): ", W, " x ", D, " x ", Ht, "  (W x D x H; frame adds ", frame_t, " in front)"));
 echo(str("fan y ", fan_y0, "..", fan_y1, "  rear wall y ", rear_in, "..", D, "  pod top z ", Ht));
-echo(str("kickstand leg angles (deg from straight down) for tilt 0/15/30: ", phis,
-         "  roof stop at ", stop_phi));
+echo(str("base: ", W + 2*(cheek_gap + cheek_t), " x ", base_y1 - base_y0, " mm; pivot ", piv_zw,
+         " above desk; lock holes (y, z) ", lock_holes));
 
 // =====================================================================
 // helpers
@@ -200,12 +192,6 @@ module slope_inverse()
                 [0, 0, 0, 1]]) children();
 module ycyl(d, h) rotate([-90, 0, 0]) cylinder(d=d, h=h);      // cylinder along +Y
 module xcyl(d, h) rotate([0, 90, 0]) cylinder(d=d, h=h);       // cylinder along +X
-// local leg angle -> 2D direction (0 = straight toward the foot, i.e. down)
-function dir2(a) = [sin(a), -cos(a)];
-module sector2(r0, r1, a0, a1) difference() {
-    polygon(concat([[0, 0]], [for (a=[a0:(a1-a0)/24:a1]) r1*dir2(a)]));
-    circle(r=r0);
-}
 
 // hex lattice of openings (flat-top hexes, across-corners = ac) clipped by children()
 module hex_grille2d(ac, rib, cxy, span) {
@@ -227,7 +213,7 @@ module front_open2d() hex_grille2d(front_hex, front_rib, [cx, cz], frame_win/2) 
 // =====================================================================
 module outer() intersection() {
     front_extrude(0, D) translate([W/2, Ht/2]) rrect2(W, Ht, r_out);
-    side_extrude(-1, W + 1) polygon([[0, 0], [y_E, 0], [D, rock_c], [D, Ht], [run, Ht], [0, z0]]);
+    side_extrude(-1, W + 1) polygon([[0, 0], [D, 0], [D, Ht], [run, Ht], [0, z0]]);
 }
 module lid_band() slope_frame() translate([-1, 0, -lid_t]) cube([W + 2, 200, 60]);
 module pod_cavity() intersection() {
@@ -238,25 +224,13 @@ module insert_block() slope_frame() hull() {
     translate([wall - 0.5, 0, -lid_t - blk_d - 0.75*blk_w]) cube([0.5, pod_L + 3, blk_d + 0.75*blk_w]);
     translate([wall + blk_w - 0.01, 0, -lid_t - blk_d]) cube([0.01, pod_L + 3, blk_d]);
 }
-module kick_slot_cut() {
-    // knuckle clearance + detent seat (forward / down sector) + opening to the rear and bottom
-    translate([sx0, y_p, z_p]) rotate([90, 0, 90]) linear_extrude(kick_slot) {
-        circle(r=slot_clear_r);
-        sector2(0, seat_r, 250, 382);
-        translate([0, -z_p - 1]) square([piv_dy + 1, z_p + 1 + slot_clear_r]);
-    }
-}
-module kick_notches() for (ph = phis)
-    translate([sx0 - 0.01, y_p, z_p]) rotate([90, 0, 90]) linear_extrude(kick_slot + 0.02)
-        translate(5.9*dir2(ph + bump_a)) circle(r=0.75, $fn=24);
-
 module shell() {
     difference() {
         union() {
             difference() {
                 outer();
-                translate([cx - rec/2, -1, cz - rec/2]) cube([rec, filter[1] + 1, rec]);      // filter recess
-                translate([pk0, filter[1] - 0.01, pk0]) cube([pk, rear_in - filter[1] + 0.01, pk]); // fan pocket + plenum
+                translate([cx - rec/2, -1, cz - rec/2]) cube([rec, rec_d + 1, rec]);          // filter recess
+                translate([pk0, rec_d - 0.01, pk0]) cube([pk, rear_in - rec_d + 0.01, pk]);   // fan pocket + plenum
                 pod_cavity();
                 lid_band();
             }
@@ -297,19 +271,13 @@ module shell() {
         // right side: USB-C + microSD
         translate([W - wall - 1, usb_y, usb_z]) rotate([0, 90, 0]) linear_extrude(wall + 2) rrect2(7.0, 12.6, 2.2);
         translate([W - wall - 1, tp_y0 + tp_sd_x, z_tp - 0.7]) rotate([0, 90, 0]) linear_extrude(wall + 2) rrect2(2.6, 12.4, 0.6);
-        // kickstand: slot, detent notches, screw pocket, shoulder-screw holes, nut trap
-        kick_slot_cut();
-        kick_notches();
-        translate([sx0 - lug1_t - head_pocket, y_p - 6, -1]) cube([head_pocket, D - y_p + 7, z_p + 6]);
-        translate([sx0 - lug1_t - 1, y_p, z_p]) xcyl(bore_d, lug1_t + 2);
-        translate([sx1 - 0.5, y_p, z_p]) xcyl(m3_clear, thread_l + 3);
-        translate([sx1 + 1.6, y_p, z_p]) hull() {
-            xcyl_hex(nut_af + 0.3, nut_t + 0.3);
-            translate([0, 0, -z_p - 2]) xcyl_hex(nut_af + 0.3, nut_t + 0.3);
+        // tilt-base inserts: pivot + lock, both side walls
+        for (p = [piv, lock_pt]) {
+            translate([-0.01, p[0], p[1]]) xcyl(insert_d, insert_l + 0.5);
+            translate([W + 0.01, p[0], p[1]]) rotate([0, 0, 180]) xcyl(insert_d, insert_l + 0.5);
         }
     }
 }
-module xcyl_hex(af, h) rotate([0, 90, 0]) cylinder(r=af/(2*cos(30)), h=h, $fn=6);
 module tp_frame() multmatrix([[0, -1, 0, tp_xe], [1, 0, 0, tp_y0], [0, 0, 1, z_tp], [0, 0, 0, 1]]) children();
 
 // =====================================================================
@@ -374,25 +342,31 @@ module pod_lid() {
 }
 
 // =====================================================================
-// KICKSTAND - pivots on a 4 mm x 25 mm M3 shoulder screw in the rear-bottom slot.
-// A spring arc on the knuckle clicks a bump into 3 notches in the shell's seat.
+// BASE - tilt stand (prints flat). Plate + two cheeks with a pivot hole and 3 lock holes.
 // =====================================================================
-kick_K = kick_kink[0]*dir2(-kick_kink[1]);
-module kick2d() {
+module base() {
     difference() {
         union() {
-            circle(r=knuckle_r);
-            hull() { circle(d=kick_arm_t); translate(kick_K) circle(d=kick_arm_t); }
-            hull() { translate(kick_K) circle(d=kick_arm_t); translate([0, -kick_L]) circle(r=kick_rf); }
-            sector2(spring_r[0], spring_r[1], spring_a[0], spring_a[1]);
-            sector2(knuckle_r - 0.5, spring_r[1], spring_a[1] - 10, spring_a[1]);   // spring root
-            translate(spring_r[1]*dir2(bump_a)) circle(r=bump_r, $fn=24);
+            linear_extrude(base_t) translate([W/2, (base_y0 + base_y1)/2])
+                rrect2(W + 2*(cheek_gap + cheek_t), base_y1 - base_y0, base_r);
+            for (x0 = cheek_x) side_extrude(x0, x0 + cheek_t) hull() {
+                translate([piv[0] - cheek_r - 4, 0]) square([lock_r + 2*cheek_r + 8, base_t]);
+                translate([piv[0], piv_zw]) circle(r=cheek_r);
+                for (h = lock_holes) translate(h) circle(r=cheek_r);
+            }
         }
-        circle(d=bore_d);
+        for (x0 = cheek_x, h = concat([[piv[0], piv_zw]], lock_holes))
+            translate([x0 - 1, h[0], h[1]]) xcyl(shoulder_bore, cheek_t + 2);
     }
 }
-module kickstand_flat() linear_extrude(kick_w) kick2d();        // print orientation (on its side)
-module kickstand_at(phi) translate([kx0, y_p, z_p]) rotate([phi, 0, 0]) rotate([90, 0, 90]) kickstand_flat();
+// shoulder screws for tilt i: pivot + lock, both sides (world frame)
+module comp_screws(i) color([0.6, 0.6, 0.6]) for (h = [[piv[0], piv_zw], lock_holes[i]]) {
+    for (m = [0, 1]) translate([m*W, 0, 0]) mirror([m, 0, 0]) translate([0, h[0], h[1]]) {
+        translate([-shoulder[1] - 3, 0, 0]) xcyl(7, 3);                     // head
+        translate([-shoulder[1], 0, 0]) xcyl(shoulder[0], shoulder[1]);     // 4 mm shoulder
+        xcyl(3.0, shoulder[2]);                                             // M3 thread, into the insert
+    }
+}
 
 // =====================================================================
 // KNOB - copied from open-gps (6 mm shaft, +0.15 bore, 3 crush ribs, light pipe)
@@ -419,18 +393,17 @@ module knob() {
 module comp_fan() {
     color([0.40, 0.28, 0.20], 0.9) translate([cx - fan[0]/2, fan_y0, cz - fan[0]/2]) cube([fan[0], fan[1], fan[0]]);
 }
-module comp_filter() color([0.13, 0.13, 0.13], 0.85) translate([cx - filter[0]/2, 0, cz - filter[0]/2]) cube([filter[0], filter[1], filter[0]]);
+// filter shown compressed to the recess depth (it is filter[1] thick when free)
+module comp_filter() color([0.13, 0.13, 0.13], 0.85) translate([cx - filter[0]/2, 0, cz - filter[0]/2]) cube([filter[0], rec_d, filter[0]]);
 module comp_mags_shell() color("silver") for (m = mags) translate([m[0], mag_depth - mag_t, m[1]]) ycyl(mag_d, mag_t);
 module comp_mags_frame() color("silver") for (m = mags) translate([m[0], -mag_depth, m[1]]) ycyl(mag_d, mag_t);
 module comp_inserts() color("gold") {
     for (h = fan_holes) translate([h[0], fan_y1, h[1]]) ycyl(insert_d - 0.02, insert_l);
     for (p = lid_screws) slope_frame() translate([p[0], p[1], -lid_t - insert_l]) cylinder(d=insert_d - 0.02, h=insert_l);
-}
-module comp_pivot() color([0.6, 0.6, 0.6]) {
-    translate([sx0 - lug1_t - 3, y_p, z_p]) xcyl(7, 3);                       // head
-    translate([sx0 - lug1_t, y_p, z_p]) xcyl(4.0, shoulder_l);                // 4 mm shoulder
-    translate([sx0 - lug1_t + shoulder_l, y_p, z_p]) xcyl(3.0, thread_l);     // M3 thread
-    translate([sx1 + 1.6 + 0.15, y_p, z_p]) xcyl_hex(nut_af, nut_t);          // nut
+    for (p = [piv, lock_pt]) {
+        translate([0, p[0], p[1]]) xcyl(insert_d - 0.02, insert_l);
+        translate([W, p[0], p[1]]) rotate([0, 0, 180]) xcyl(insert_d - 0.02, insert_l);
+    }
 }
 module comp_floor() {
     color("red", 0.9) tp_frame() {
@@ -465,11 +438,21 @@ module comp_lid() slope_frame() {
     }
 }
 module components() {
-    comp_fan(); comp_filter(); comp_mags_shell(); comp_mags_frame(); comp_inserts(); comp_pivot();
+    comp_fan(); comp_filter(); comp_mags_shell(); comp_mags_frame(); comp_inserts();
     comp_floor(); comp_lid();
 }
-// everything below the desk (offset 0.05 so the touching faces don't count), case tilted back by th
-module below_desk(th) translate([0, y_E, 0]) rotate([th, 0, 0]) translate([-500, -500, -1000.05]) cube(1000);
+module case_body() { shell(); frame(); pod_lid(); }
+module assembled(i, ghosts=true) {
+    pose(tilts[i]) {
+        color([0.36, 0.45, 0.52]) render() shell();
+        color([0.85, 0.85, 0.85]) render() frame();
+        color([0.93, 0.93, 0.93]) render() pod_lid();
+        if (ghosts) components();
+        slope_frame() translate([tw_cx, tw_cs, 1]) color("white", 0.8) knob();
+    }
+    color([0.79, 0.71, 0.35]) render() base();
+    comp_screws(i);
+}
 
 // =====================================================================
 // part selection
@@ -477,20 +460,20 @@ module below_desk(th) translate([0, y_E, 0]) rotate([th, 0, 0]) translate([-500,
 if (part == "shell") translate([0, 0, D]) rotate([-90, 0, 0]) shell();                     // rear-down
 else if (part == "frame") translate([0, H, frame_t]) rotate([90, 0, 0]) frame();           // face-down
 else if (part == "pod_lid") translate([0, pod_L + 2, 0]) rotate([180, 0, 0]) slope_inverse() pod_lid();  // face-down
-else if (part == "kickstand") translate([knuckle_r + 2, kick_L + kick_rf + 1, 0]) kickstand_flat();     // on its side
+else if (part == "base" || part == "kickstand") translate([cheek_gap + cheek_t, -base_y0, 0]) base();   // flat
 else if (part == "knob") knob();
 else if (part == "chk_shell") intersection() { shell(); components(); }
 else if (part == "chk_frame") intersection() { frame(); components(); }
 else if (part == "chk_pod_lid") intersection() { pod_lid(); components(); }
-else if (part == "chk_kickstand") intersection() {
-    union() { for (ph = phis) kickstand_at(ph); }
-    union() { shell(); components(); }
+else if (part == "chk_kickstand" || part == "chk_base") for (i = [0:2]) {
+    intersection() { base(); union() { pose(tilts[i]) { case_body(); components(); } comp_screws(i); } }
+    intersection() { comp_screws(i); pose(tilts[i]) case_body(); }
 }
 else if (part == "chk_shell_frame") intersection() { shell(); frame(); }
 else if (part == "chk_shell_pod_lid") intersection() { shell(); pod_lid(); }
-else if (part == "chk_desk") for (i = [0:2]) intersection() {
-    union() { shell(); kickstand_at(phis[i]); }
-    below_desk(tilts[i]);
+else if (part == "chk_desk") for (i = [0:2]) intersection() {      // nothing below the desk at any tilt
+    union() { base(); pose(tilts[i]) case_body(); }
+    translate([-500, -500, -1000.05]) cube(1000);
 }
 else if (part == "chk_ghosts") intersection() { union() { comp_fan(); comp_floor(); } comp_lid(); }
 else if (part == "area_rear_open") rear_open2d();
@@ -499,7 +482,7 @@ else if (part == "area_front_open") front_open2d();
 else if (part == "area_front_total") translate([cx, cz]) square(frame_win, center=true);
 else if (part == "exploded") {
     color([0.36, 0.45, 0.52]) render() shell();
-    if (show_components) { comp_floor(); comp_inserts(); comp_mags_shell(); comp_pivot(); }
+    if (show_components) { comp_floor(); comp_inserts(); comp_mags_shell(); }
     translate([0, -45, 0]) { if (show_components) comp_fan(); }
     translate([0, -95, 0]) { if (show_components) comp_filter(); }
     translate([0, -130, 0]) { color([0.85, 0.85, 0.85]) render() frame(); if (show_components) comp_mags_frame(); }
@@ -507,16 +490,10 @@ else if (part == "exploded") {
         color([0.93, 0.93, 0.93]) render() pod_lid(); if (show_components) comp_lid();
         slope_frame() translate([tw_cx, tw_cs, 25]) color("white", 0.8) knob();
     }
-    translate([0, 40, -10]) color([0.79, 0.71, 0.35]) render() kickstand_at(phis[1]);
+    translate([0, 0, -60]) { color([0.79, 0.71, 0.35]) render() base(); }
 } else if (part == "assembly") {
-    // standing on the desk, tilted back to the chosen detent about the rock edge
-    translate([0, y_E, 0]) rotate([-kick_view_deg, 0, 0]) translate([0, -y_E, 0]) {
-        color([0.36, 0.45, 0.52]) render() shell();
-        color([0.85, 0.85, 0.85]) render() frame();
-        color([0.93, 0.93, 0.93]) render() pod_lid();
-        if (show_components) components();
-        slope_frame() translate([tw_cx, tw_cs, 1]) color("white", 0.8) knob();
-        color([0.79, 0.71, 0.35]) render() kickstand_at(leg_phi(kick_view_deg));
-    }
-    color([0.55, 0.42, 0.30], 0.35) translate([-20, -60, -2]) cube([W + 40, D + 140, 2]);   // desk
+    assembled(view_tilt, show_components);
+    color([0.55, 0.42, 0.30], 0.35) translate([-40, base_y0 - 30, -2]) cube([W + 80, base_y1 - base_y0 + 60, 2]);   // desk
+} else if (part == "poses") {      // 0 / 15 / 30 deg side by side, for the side-view render
+    for (i = [0:2]) translate([0, i*190, 0]) assembled(i, false);
 }
