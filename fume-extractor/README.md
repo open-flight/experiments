@@ -5,7 +5,7 @@ A small desk fume extractor that pulls solder smoke away from the work. It's the
 ![Assembly, tilted forward 15 degrees on its base](case/render_assembly.png)
 
 > [!TIP]
-> **Get every SparkFun part in one click: <SPARKFUN_WISHLIST_URL>** (the shared wishlist link is not set up yet; until it is, use the product links in [Bill of materials](#bill-of-materials)).
+> **A one-click SparkFun wishlist is coming soon.** For now, use the individual SparkFun links in the [Bill of materials](#bill-of-materials) below.
 > <sub>The SparkFun and Amazon links are referral links, so buying through them supports the project at no extra cost to you.</sub>
 
 - **Firmware:** Arduino (ESP32-S3). 25 kHz PWM, tach read-back, stall warning, dial and OLED UI.
@@ -27,6 +27,8 @@ A small desk fume extractor that pulls solder smoke away from the work. It's the
 
 Power is any USB-C wall charger rated 5 V / 1 A or more, plus a USB-C cable. Total draw is under 0.6 A. No PD negotiation and no 12 V.
 
+The cable needs a **slim USB-C plug body**. The opening in the case's side wall is 12.6 x 7 mm, and the plug has to reach about 2.7 mm into the wall to seat in the Thing Plus's socket, so bulky overmoulded plugs won't go in far enough.
+
 ### SparkFun
 
 | Qty | Part | Notes |
@@ -44,7 +46,7 @@ These are search links, not fixed product pages, so you can pick a well-reviewed
 |---|---|---|
 | 1 | [Noctua NF-A12x25 5V PWM fan](https://www.amazon.com/s?k=Noctua+NF-A12x25+5V+PWM&tag=colemangolfs-20) | Must be the **5V** version. The 12 V one will not work here. 120 x 120 x 25 mm, 4-pin. |
 | 1 | [130 x 130 mm carbon filter pads, multipack](https://www.amazon.com/s?k=130x130mm+activated+carbon+filter+948DQ+replacement&tag=colemangolfs-20) | 948DQ-style replacements, 10 mm thick. Buy a multipack. |
-| 1 | [2N7000 N-MOSFET](https://www.amazon.com/s?k=2N7000+TO-92+MOSFET&tag=colemangolfs-20) | TO-92. Any logic-level N-MOSFET works. |
+| 1 | [2N7000 N-MOSFET](https://www.amazon.com/s?k=2N7000+TO-92+MOSFET&tag=colemangolfs-20) | TO-92. Its gate threshold can be as high as 3 V, so with the ESP32's 3.3 V drive some parts won't switch fully. A true logic-level part is the safer choice: **AO3400** or **BSS138** (both SOT-23, so solder it to a SOT-23 adapter, and wire it by pin name: G, D, S). |
 | 1 | [Protoboard, about 50 x 30 mm](https://www.amazon.com/s?k=mini+protoboard+solderable+PCB+kit&tag=colemangolfs-20) | The case expects 50 x 30 mm with holes 2.5 mm in |
 | 1 | [4-pin fan header](https://www.amazon.com/s?k=4+pin+PWM+fan+header+connector+2.54mm&tag=colemangolfs-20) | 2.54 mm pitch |
 | 1 set | [Resistors: 10 k, 100 k, 100 ohm](https://www.amazon.com/s?k=resistor+assortment+kit+1%2F4W&tag=colemangolfs-20) | 1/4 W assortment is fine |
@@ -54,6 +56,7 @@ These are search links, not fixed product pages, so you can pick a well-reviewed
 | 8 | [6 x 3 mm disc magnets](https://www.amazon.com/s?k=6x3mm+neodymium+disc+magnets+N52&tag=colemangolfs-20) | Check polarity before gluing |
 | 1 set | [Small M2 and M2.5 screws](https://www.amazon.com/s?k=M2+M2.5+pan+head+screw+assortment&tag=colemangolfs-20) | M2.5 x 4, x 5, x 8 and M2 x 5 |
 | 1 | [Hookup wire](https://www.amazon.com/s?k=22awg+silicone+hookup+wire+kit&tag=colemangolfs-20) | |
+| 1 | Steel flat bar, 25 x 12 mm (or 1" x 1/2"), about 250 mm | Base ballast, about 575 g. Cut one 140 mm and two 52 mm pieces. Any hardware store. **Needed** so a press on the dial doesn't tip the case backward. |
 
 The full case hardware list (with where each screw goes) is in [case/README.md](case/README.md#hardware). Optional: rubber feet for the base plate and 3 mm foam tape around the fan.
 
@@ -101,7 +104,17 @@ arduino-cli monitor -p /dev/cu.usbmodem101 -c baudrate=115200
 - **Click** to toggle between Off and the last non-zero speed.
 - On power-up it starts at the last-used speed, so plugging it in is enough to turn it on.
 - After 10 minutes with no dial input the screen dims. The fan keeps running.
-- **`FAN?`** appears on the screen, and the dial blinks red, when the PWM is above 20% and the tach reads 0 for 3 seconds. It means the fan is stalled, unplugged, or the tach wire has come loose. Check the fan cable and the fan's path for obstruction.
+- **`FAN?`** appears on the screen (also when it's dimmed), and the dial blinks red, when the PWM is above 20% and the tach reads 0 for 3 seconds. It means the fan is stalled, unplugged, or the tach wire has come loose. Check the fan cable and the fan's path for obstruction.
+
+- **Changing the filter:** tilt the case to 0° first. At 30° the frame's bottom edge is only about 2 mm above the base, too little to get a finger into the scoop under it. Peel the frame off from that scoop, not from the middle or top (see [case/README.md](case/README.md#known-limitations--next-steps)).
+
+## Safety
+
+- The case is PETG, which softens at about 80 °C, and the carbon pads can smoulder if a hot iron touches them.
+- Never rest the iron on the frame or the filter.
+- Keep the iron's stand between the iron and the unit, or off to the side.
+- Unplug the unit when you walk away from the bench.
+- Replace any filter pad that is scorched.
 
 ## Acceptance test
 
