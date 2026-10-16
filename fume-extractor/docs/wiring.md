@@ -38,7 +38,7 @@ Notes:
 
 ## Bench check
 
-Flash the sketch and confirm each item:
+Flash the sketch and confirm each item. The serial monitor needs the sketch built with the `CDCOnBoot=cdc` FQBN option shown in the [project README](../README.md#firmware-build-and-flash), otherwise it stays blank.
 
 - [ ] Serial (115200) shows `oled=1 twist=1`.
 - [ ] The dial steps the fan 0-100% in 10% steps.

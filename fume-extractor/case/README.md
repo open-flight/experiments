@@ -80,11 +80,11 @@ openscad -D 'part="exploded"' --imgsize=1200,900 --camera=-400,-330,250,73,-40,9
    - 4 into the pod side walls, through the open pod face.
    - 4 into the shell's outer side walls near the bottom: pivot and lock, both sides.
 2. Press the magnets into the shell and frame corners. Put the frame on the shell first and check that it pulls on, not off, before gluing any magnet.
-4. Screw the Thing Plus to the floor (USB-C into the right-wall opening) and the protoboard to its standoffs.
-5. Fan: the label/strut side faces **back** (air flows front → back). Turn the fan so its cable comes out near the top, a little left of centre. Feed the plug up through the channel at the top of the plenum, then seat the fan and fit the four M3 x 30 screws. Plug the fan into the protoboard header.
-6. Screw the OLED (glass against the lid) and the Twist (shaft through the hole) to the lid, connect Qwiic Thing Plus → OLED → Twist, and screw the lid on.
-7. Drop in the filter pad, then put the frame on. Push the knob onto the shaft.
-8. Stand the case between the base cheeks and fit the two pivot shoulder screws. Then fit the two lock screws in the hole for the tilt you want: lowest hole 0°, middle 15°, top 30°.
+3. Screw the Thing Plus to the floor (USB-C into the right-wall opening) and the protoboard to its standoffs.
+4. Fan: the label/strut side faces **back** (air flows front → back). Turn the fan so its cable comes out near the top, a little left of centre. Feed the plug up through the channel at the top of the plenum, then seat the fan and fit the four M3 x 30 screws. Plug the fan into the protoboard header.
+5. Screw the OLED (glass against the lid) and the Twist (shaft through the hole) to the lid, connect Qwiic Thing Plus → OLED → Twist, and screw the lid on.
+6. Drop in the filter pad, then put the frame on. Push the knob onto the shaft.
+7. Stand the case between the base cheeks and fit the two pivot shoulder screws. Then fit the two lock screws in the hole for the tilt you want: lowest hole 0°, middle 15°, top 30°.
 
 ## Measure before you print
 

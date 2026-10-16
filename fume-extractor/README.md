@@ -34,7 +34,7 @@ Power is any USB-C wall charger rated 5 V / 1 A or more, plus a USB-C cable. Tot
 | 1 | [SparkFun Thing Plus ESP32-S3](https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html?affiliate_code=rfxlS0eYyY) | Main board. USB-C power input, one Qwiic port. |
 | 1 | [SparkFun Qwiic OLED 1.3" 128x64](https://www.sparkfun.com/sparkfun-qwiic-oled-1-3in-128x64.html?affiliate_code=rfxlS0eYyY) | Address 0x3D |
 | 1 | [SparkFun Qwiic Twist RGB rotary encoder](https://www.sparkfun.com/sparkfun-qwiic-twist-rgb-rotary-encoder-breakout.html?affiliate_code=rfxlS0eYyY) | Address 0x3F |
-| 1 | [SparkFun Qwiic Cable Kit](https://www.sparkfun.com/search/results?term=qwiic+cable+kit&affiliate_code=rfxlS0eYyY) | Search link; pick the "Qwiic Cable Kit" result |
+| 1 | [SparkFun Qwiic Cable Kit](https://www.sparkfun.com/sparkfun-qwiic-cable-kit.html?affiliate_code=rfxlS0eYyY) | |
 
 ### Amazon
 
