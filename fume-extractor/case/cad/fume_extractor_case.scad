@@ -6,8 +6,8 @@
 //  Export a part:   openscad -D 'part="shell"' -o shell.stl fume_extractor_case.scad
 //  part = "assembly" | "exploded" | "poses" | "shell" | "frame" | "pod_lid" | "base" | "knob"
 //  Fit checks (should all be empty):
-//         "chk_shell" | "chk_frame" | "chk_pod_lid" | "chk_kickstand" (= base + screws vs the
-//         posed case at 0/15/30) |
+//         "chk_shell" | "chk_frame" | "chk_pod_lid" | "chk_kickstand" (= base + screws + ballast vs
+//         the posed case at 0/15/30) |
 //         "chk_shell_frame" | "chk_shell_pod_lid" | "chk_desk" | "chk_ghosts"
 //  Area helpers (2D, use with --summary area): "area_rear_open" | "area_rear_total" |
 //         "area_front_open" | "area_front_total"
@@ -107,19 +107,30 @@ proto_parts_h = 15;  // tallest part incl. the mated fan plug
 // The case hangs between two cheeks of a base plate on M3 shoulder screws: one pivot screw and
 // one lock screw per side. The cheeks have 3 lock holes, so the case tilts FORWARD (intake aims
 // down at the work) by 0, 15 or 30 deg. The plate reaches well forward so the centre of mass
-// stays far inside the footprint at every tilt.
+// stays far inside the footprint at every tilt. The knob is ~190 mm up and is pressed toward the
+// rear, so the plate also reaches 80 mm behind the case, and a ballast plinth at the front takes
+// steel flat bar: with ~575 g of steel a 10 N press along the knob axis can't tip it at 0/15/30 deg.
 tilts      = [0, 15, 30];
 piv        = [8, 8];         // pivot, in the shell's side walls: body (y, z)
 lock_r     = 25;             // lock-screw insert, this far behind the pivot (body)
 piv_h      = 15;             // pivot above the plate top (the frame's bottom edge clears the plate at 30 deg)
 base_t     = 4;
-base_reach = [75, 6];        // plate reach in front of the shell face / behind the rear face
+base_reach = [75, 80];       // plate reach in front of the shell face / behind the rear face
 base_r     = 8;
 cheek_t    = 5;
 cheek_gap  = 1.0;            // cheek to shell side; shoulder length = cheek_t + cheek_gap
 cheek_r    = 7;
 shoulder   = [4.0, 6, 5];    // ISO 7379 shoulder screw: [shoulder d, shoulder length, M3 thread length]
 shoulder_bore = 4.3;
+// ballast plinth (front of the plate): open-top pockets for 25 x 12 mm (or 1" x 1/2") steel flat bar.
+// One 140 mm bar across the front, two 52 mm bars behind it either side of a finger notch, which
+// leaves room to reach under the frame's finger scoop at 0 deg.
+bal_bar    = [25.4, 12.7];   // bar section the pockets fit: [width, thickness]
+bal_clr    = 0.4;            // pocket clearance per side (width and length) and over the top
+bal_len    = [140, 52];      // bar lengths: front pocket, each of the two rear pockets
+bal_floor  = 2.0;            // pocket floor
+bal_wall   = [2.4, 3.0, 3.2];  // front wall, wall between the rows, rear wall
+notch_w    = 30;             // finger notch in the rear row, centred on the scoop
 
 // ---------- derived ----------
 cx = W/2; cz = H/2;                       // fan / filter centre (front view)
@@ -163,6 +174,11 @@ lock_pt  = [piv[0] + lock_r, piv[1]];         // body (y, z)
 lock_holes = [for (t = tilts) [piv[0] + lock_r*cos(t), piv_zw + lock_r*sin(t)]];   // world (y, z), in the cheeks
 base_y0  = -base_reach[0];  base_y1 = D + base_reach[1];
 cheek_x  = [-cheek_gap - cheek_t, W + cheek_gap];
+bal_pw   = bal_bar[0] + 2*bal_clr;            // pocket width (along Y)
+plinth_h = bal_floor + bal_bar[1] + bal_clr;  // plinth top above the desk
+bal_py   = [base_y0 + bal_wall[0], base_y0 + bal_wall[0] + bal_pw + bal_wall[1]];   // pocket front edges (y)
+plinth_y1 = bal_py[1] + bal_pw + bal_wall[2];  // plinth rear face (y)
+bal_rx   = notch_w/2 + bal_wall[1] + bal_len[1]/2 + bal_clr;   // rear pockets' centre offset from cx
 // place the case (and anything in its body frame) at tilt th, forward-positive
 module pose(th) translate([0, piv[0], piv_zw]) rotate([th, 0, 0]) translate([0, -piv[0], -piv[1]]) children();
 
@@ -170,6 +186,8 @@ echo(str("OUTER SIZE (mm): ", W, " x ", D, " x ", Ht, "  (W x D x H; frame adds 
 echo(str("fan y ", fan_y0, "..", fan_y1, "  rear wall y ", rear_in, "..", D, "  pod top z ", Ht));
 echo(str("base: ", W + 2*(cheek_gap + cheek_t), " x ", base_y1 - base_y0, " mm; pivot ", piv_zw,
          " above desk; lock holes (y, z) ", lock_holes));
+echo(str("ballast plinth: y ", base_y0, "..", plinth_y1, ", ", plinth_h, " mm tall; pockets ",
+         bal_len[0] + 2*bal_clr, " and 2 x ", bal_len[1] + 2*bal_clr, " long, ", bal_pw, " wide"));
 
 // =====================================================================
 // helpers
@@ -272,9 +290,10 @@ module shell() {
         translate([W - wall - 1, usb_y, usb_z]) rotate([0, 90, 0]) linear_extrude(wall + 2) rrect2(7.0, 12.6, 2.2);
         translate([W - wall - 1, tp_y0 + tp_sd_x, z_tp - 0.7]) rotate([0, 90, 0]) linear_extrude(wall + 2) rrect2(2.6, 12.4, 0.6);
         // tilt-base inserts: pivot + lock, both side walls
-        for (p = [piv, lock_pt]) {
-            translate([-0.01, p[0], p[1]]) xcyl(insert_d, insert_l + 0.5);
-            translate([W + 0.01, p[0], p[1]]) rotate([0, 0, 180]) xcyl(insert_d, insert_l + 0.5);
+        // (the pivot hole stops at insert_l: it sits 7.5 mm from the filter recess, leaving 1.8 mm)
+        for (p = [[piv, insert_l], [lock_pt, insert_l + 0.5]]) {
+            translate([-0.01, p[0][0], p[0][1]]) xcyl(insert_d, p[1] + 0.01);
+            translate([W + 0.01, p[0][0], p[0][1]]) rotate([0, 0, 180]) xcyl(insert_d, p[1] + 0.01);
         }
     }
 }
@@ -354,10 +373,27 @@ module base() {
                 translate([piv[0], piv_zw]) circle(r=cheek_r);
                 for (h = lock_holes) translate(h) circle(r=cheek_r);
             }
+            // ballast plinth across the front of the plate
+            intersection() {
+                linear_extrude(plinth_h) translate([W/2, (base_y0 + base_y1)/2])
+                    rrect2(W + 2*(cheek_gap + cheek_t), base_y1 - base_y0, base_r);
+                translate([-50, base_y0 - 1, 0]) cube([W + 100, plinth_y1 - base_y0 + 1, plinth_h]);
+            }
         }
         for (x0 = cheek_x, h = concat([[piv[0], piv_zw]], lock_holes))
             translate([x0 - 1, h[0], h[1]]) xcyl(shoulder_bore, cheek_t + 2);
+        // ballast pockets (open top) and the finger notch
+        translate([cx - bal_len[0]/2 - bal_clr, bal_py[0], bal_floor]) cube([bal_len[0] + 2*bal_clr, bal_pw, plinth_h]);
+        for (sx = [-1, 1]) translate([cx + sx*bal_rx - bal_len[1]/2 - bal_clr, bal_py[1], bal_floor])
+            cube([bal_len[1] + 2*bal_clr, bal_pw, plinth_h]);
+        translate([cx - notch_w/2, bal_py[1], base_t]) cube([notch_w, plinth_y1 - bal_py[1] + 1, plinth_h]);
     }
+}
+// steel ballast bars (ghosts)
+module comp_ballast() color([0.35, 0.35, 0.38]) {
+    translate([cx - bal_len[0]/2, bal_py[0] + bal_clr, bal_floor]) cube([bal_len[0], bal_bar[0], bal_bar[1]]);
+    for (sx = [-1, 1]) translate([cx + sx*bal_rx - bal_len[1]/2, bal_py[1] + bal_clr, bal_floor])
+        cube([bal_len[1], bal_bar[0], bal_bar[1]]);
 }
 // shoulder screws for tilt i: pivot + lock, both sides (world frame)
 module comp_screws(i) color([0.6, 0.6, 0.6]) for (h = [[piv[0], piv_zw], lock_holes[i]]) {
@@ -451,6 +487,7 @@ module assembled(i, ghosts=true) {
         slope_frame() translate([tw_cx, tw_cs, 1]) color("white", 0.8) knob();
     }
     color([0.79, 0.71, 0.35]) render() base();
+    if (ghosts) comp_ballast();
     comp_screws(i);
 }
 
@@ -468,6 +505,7 @@ else if (part == "chk_pod_lid") intersection() { pod_lid(); components(); }
 else if (part == "chk_kickstand" || part == "chk_base") for (i = [0:2]) {
     intersection() { base(); union() { pose(tilts[i]) { case_body(); components(); } comp_screws(i); } }
     intersection() { comp_screws(i); pose(tilts[i]) case_body(); }
+    intersection() { comp_ballast(); union() { base(); pose(tilts[i]) { case_body(); components(); } } }
 }
 else if (part == "chk_shell_frame") intersection() { shell(); frame(); }
 else if (part == "chk_shell_pod_lid") intersection() { shell(); pod_lid(); }
@@ -490,10 +528,10 @@ else if (part == "exploded") {
         color([0.93, 0.93, 0.93]) render() pod_lid(); if (show_components) comp_lid();
         slope_frame() translate([tw_cx, tw_cs, 25]) color("white", 0.8) knob();
     }
-    translate([0, 0, -60]) { color([0.79, 0.71, 0.35]) render() base(); }
+    translate([0, 0, -60]) { color([0.79, 0.71, 0.35]) render() base(); if (show_components) translate([0, 0, 25]) comp_ballast(); }
 } else if (part == "assembly") {
     assembled(view_tilt, show_components);
     color([0.55, 0.42, 0.30], 0.35) translate([-40, base_y0 - 30, -2]) cube([W + 80, base_y1 - base_y0 + 60, 2]);   // desk
 } else if (part == "poses") {      // 0 / 15 / 30 deg side by side, for the side-view render
-    for (i = [0:2]) translate([0, i*190, 0]) assembled(i, false);
+    for (i = [0:2]) translate([0, i*230, 0]) assembled(i, false);
 }
