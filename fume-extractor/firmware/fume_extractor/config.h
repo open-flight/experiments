@@ -8,13 +8,17 @@
 // ESP32 GPIO numbers, so both are noted. Strapping pins (0, 3, 45, 46) are avoided,
 // as are I2C (8/9), USB (19/20), UART0 (43/44) and flash/PSRAM pins (26-37).
 //
-// Fan PWM: ESP32 GPIO4 (header silk "4"). Plain GPIO with no boot-time function or
+// Pad names below use raw ESP32 IO numbers, which SparkFun's hardware overview says is how
+// the PTH pads are labeled ("pad 4" = IO4). The Arduino aliases GPIO0..GPIO6 in
+// pins_arduino.h are a different scheme (GPIO3 = IO5, GPIO4 = IO4) and are not used here.
+//
+// Fan PWM: IO4 (pad "4"). Plain GPIO with no boot-time function or
 // default pull. It drives the 2N7000 gate (inverted: gate high pulls the fan PWM line
 // low), and the 100k gate pulldown keeps the fan at full speed (fail-safe) until
 // setup() runs.
 constexpr int PIN_FAN_PWM = 4;
 
-// Fan tach: ESP32 GPIO5 (header silk "GPIO3"; NOT ESP32 GPIO3, which is a strapping
+// Fan tach: IO5 (pad "5"; Arduino alias GPIO3, not to be confused with IO3, a strapping
 // pin). Plain GPIO, adjacent to the PWM pin on the header, and any pin can take a
 // GPIO interrupt. External 10k pull-up to 3V3 (the fan tach is open-collector).
 constexpr int PIN_FAN_TACH = 5;
