@@ -5,7 +5,7 @@ Status: approved 2026-10-16
 
 Owner approved without answering three open questions, so these defaults stand until changed:
 - If the 5 V fan fails the acceptance test after filter tweaks, stop and ask the owner before changing the fan or power design.
-- Amazon links are plain (no affiliate tag).
+- Amazon links carry the owner's affiliate tag `tag=colemangolfs-20`; SparkFun links carry `affiliate_code=rfxlS0eYyY` (owner, 2026-10-16).
 - One AGPL-3.0 LICENSE at the repo root covers every project.
 
 ## Intent

@@ -25,7 +25,7 @@
 - Twist color: dim blue (0,0,8) when Off, blue → green → red from level 1 to level 10.
 - Case: PETG, about 140 × 140 mm front. 130 × 130 mm filter in a magnetic front frame. Air goes in at the front and out a guarded rear grille. Raised control pod on top. Rear kickstand at 0°, 15° and 30°.
 - License: one AGPL-3.0 `LICENSE` at the repo root (copy `~/code/open-gps/LICENSE`).
-- Amazon links are plain. The SparkFun wishlist URL is the placeholder `<SPARKFUN_WISHLIST_URL>` until the owner makes it. Use `affiliate_code=rfxlS0eYyY` on SparkFun product links, as open-gps does.
+- Amazon links carry the affiliate tag `tag=colemangolfs-20` (e.g. `https://www.amazon.com/dp/<ASIN>?tag=colemangolfs-20`). The SparkFun wishlist URL is the placeholder `<SPARKFUN_WISHLIST_URL>` until the owner makes it. Use `affiliate_code=rfxlS0eYyY` on SparkFun product links, as open-gps does.
 
 ## Review Focus
 
@@ -183,7 +183,7 @@
 - [ ] **Step 1: Write the README**, matching open-gps's README structure. Include:
   - What it is (one paragraph) and the assembly render.
   - The `<SPARKFUN_WISHLIST_URL>` callout.
-  - A BOM table split into SparkFun (affiliate product links) and Amazon (plain links: Noctua NF-A12x25 5V PWM, 130 mm carbon filter multipack, 2N7000, protoboard, 4-pin fan header, resistors, M3 inserts and screws, 6 × 3 mm magnets).
+  - A BOM table split into SparkFun (affiliate product links) and Amazon (links with `?tag=colemangolfs-20`: Noctua NF-A12x25 5V PWM, 130 mm carbon filter multipack, 2N7000, protoboard, 4-pin fan header, resistors, M3 inserts and screws, 6 × 3 mm magnets).
   - A link to `docs/wiring.md`, the firmware build and flash commands from Task 2, and the case print notes.
   - Usage: turn, click, and what `FAN?` means.
   - The spec's acceptance test, word for word.
