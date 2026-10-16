@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 545" width="960" height="545" font-family="Helvetica, Arial, sans-serif" font-size="14">
+  <title>Fume extractor wiring</title>
+  <rect width="960" height="545" fill="#ffffff"/>
+
+  <text x="480" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">Fume extractor wiring</text>
+
+  <!-- Protoboard outline -->
+  <rect x="285" y="180" width="380" height="250" rx="8" fill="#f4f8ec" stroke="#8aa36b" stroke-dasharray="6 4"/>
+  <text x="655" y="198" text-anchor="end" font-size="12" fill="#5d7444">protoboard (≈50 × 30 mm)</text>
+
+  <!-- Thing Plus -->
+  <rect x="30" y="60" width="200" height="320" rx="10" fill="#e33c3c" stroke="#a52020" stroke-width="2"/>
+  <text x="130" y="52" text-anchor="middle" font-weight="bold" fill="#222">SparkFun Thing Plus ESP32-S3</text>
+  <g fill="#fff" text-anchor="end">
+    <text x="218" y="105">GND</text>
+    <text x="218" y="155">VUSB (5 V)</text>
+    <text x="218" y="205">3V3</text>
+    <text x="218" y="255">pad 5 (IO5)</text>
+    <text x="218" y="335">pad 4 (IO4)</text>
+  </g>
+  <g fill="#ffd34d" stroke="#222">
+    <circle cx="230" cy="100" r="5"/><circle cx="230" cy="150" r="5"/><circle cx="230" cy="200" r="5"/>
+    <circle cx="230" cy="250" r="5"/><circle cx="230" cy="330" r="5"/>
+  </g>
+  <!-- USB-C in -->
+  <rect x="14" y="200" width="22" height="34" rx="6" fill="#bbb" stroke="#555"/>
+  <text x="44" y="216" font-size="12" fill="#fff">USB-C from</text>
+  <text x="44" y="231" font-size="12" fill="#fff">wall charger</text>
+  <!-- Qwiic port -->
+  <rect x="110" y="368" width="40" height="18" rx="3" fill="#333"/>
+  <text x="130" y="362" text-anchor="middle" font-size="12" fill="#fff">Qwiic</text>
+
+  <!-- Fan -->
+  <rect x="760" y="60" width="175" height="290" rx="10" fill="#7a4e2d" stroke="#4d2f19" stroke-width="2"/>
+  <text x="848" y="52" text-anchor="middle" font-weight="bold" fill="#222">Noctua NF-A12x25 5V PWM</text>
+  <g fill="#fff">
+    <text x="775" y="105">pin 1 · GND</text>
+    <text x="775" y="155">pin 2 · +5 V</text>
+    <text x="775" y="255">pin 3 · TACH</text>
+    <text x="775" y="305">pin 4 · PWM</text>
+  </g>
+  <g fill="#ffd34d" stroke="#222">
+    <circle cx="760" cy="100" r="5"/><circle cx="760" cy="150" r="5"/>
+    <circle cx="760" cy="250" r="5"/><circle cx="760" cy="300" r="5"/>
+  </g>
+  <text x="848" y="340" text-anchor="middle" font-size="11" fill="#f1dccb">standard 4-pin fan pinout</text>
+
+  <!-- GND and 5 V straight runs -->
+  <line x1="235" y1="100" x2="755" y2="100" stroke="#111" stroke-width="3"/>
+  <text x="495" y="92" text-anchor="middle" font-size="12" fill="#111">GND</text>
+  <line x1="235" y1="150" x2="755" y2="150" stroke="#d62828" stroke-width="3"/>
+  <text x="495" y="142" text-anchor="middle" font-size="12" fill="#d62828">5 V (fan draws up to 0.35 A)</text>
+
+  <!-- Tach with 10k pull-up to 3V3 -->
+  <polyline points="235,200 340,200 340,206" fill="none" stroke="#f08c00" stroke-width="3"/>
+  <rect x="333" y="206" width="14" height="36" fill="#fff" stroke="#333" stroke-width="2"/>
+  <text x="354" y="229" font-size="12" fill="#333">10 kΩ</text>
+  <line x1="340" y1="242" x2="340" y2="250" stroke="#f08c00" stroke-width="3"/>
+  <line x1="235" y1="250" x2="755" y2="250" stroke="#e0b400" stroke-width="3"/>
+  <circle cx="340" cy="250" r="5" fill="#222"/>
+  <text x="495" y="242" text-anchor="middle" font-size="12" fill="#9a7b00">tach (2 pulses / rev)</text>
+  <text x="255" y="193" font-size="12" fill="#c06a00">3.3 V</text>
+
+  <!-- PWM path: IO4 → 100R → gate, 100k pull-down -->
+  <line x1="235" y1="330" x2="300" y2="330" stroke="#1971c2" stroke-width="3"/>
+  <rect x="300" y="323" width="44" height="14" fill="#fff" stroke="#333" stroke-width="2"/>
+  <text x="322" y="317" text-anchor="middle" font-size="12" fill="#333">100 Ω</text>
+  <line x1="344" y1="330" x2="505" y2="330" stroke="#1971c2" stroke-width="3"/>
+  <circle cx="420" cy="330" r="5" fill="#222"/>
+  <line x1="420" y1="330" x2="420" y2="350" stroke="#111" stroke-width="2"/>
+  <rect x="413" y="350" width="14" height="36" fill="#fff" stroke="#333" stroke-width="2"/>
+  <text x="380" y="373" text-anchor="end" font-size="12" fill="#333">100 kΩ</text>
+  <line x1="420" y1="386" x2="420" y2="400" stroke="#111" stroke-width="2"/>
+  <g stroke="#111" stroke-width="2">
+    <line x1="406" y1="400" x2="434" y2="400"/><line x1="411" y1="406" x2="429" y2="406"/><line x1="416" y1="412" x2="424" y2="412"/>
+  </g>
+
+  <!-- MOSFET (N-channel, low side) -->
+  <g stroke="#111" stroke-width="2.5" fill="none">
+    <line x1="505" y1="314" x2="505" y2="346"/>
+    <line x1="514" y1="310" x2="514" y2="350"/>
+    <line x1="514" y1="314" x2="530" y2="314"/>
+    <line x1="514" y1="346" x2="530" y2="346"/>
+    <line x1="530" y1="314" x2="530" y2="300"/>
+    <line x1="530" y1="346" x2="530" y2="400"/>
+  </g>
+  <path d="M514,330 L526,325 L526,335 Z" fill="#111"/>
+  <line x1="514" y1="330" x2="530" y2="330" stroke="#111" stroke-width="2"/>
+  <line x1="530" y1="330" x2="530" y2="346" stroke="#111" stroke-width="2"/>
+  <text x="497" y="322" text-anchor="end" font-size="12" fill="#333">G</text>
+  <text x="538" y="312" font-size="12" fill="#333">D</text>
+  <text x="538" y="392" font-size="12" fill="#333">S</text>
+  <text x="556" y="330" font-size="12" font-weight="bold" fill="#333">N-MOSFET</text>
+  <text x="556" y="345" font-size="11" fill="#555">AO3400 / BSS138</text>
+  <text x="556" y="359" font-size="11" fill="#555">(or 2N7000)</text>
+  <g stroke="#111" stroke-width="2">
+    <line x1="516" y1="400" x2="544" y2="400"/><line x1="521" y1="406" x2="539" y2="406"/><line x1="526" y1="412" x2="534" y2="412"/>
+  </g>
+  <text x="482" y="428" text-anchor="middle" font-size="11" fill="#555">⏚ = GND (tie to Thing Plus GND)</text>
+  <!-- drain to fan PWM -->
+  <line x1="530" y1="300" x2="755" y2="300" stroke="#1971c2" stroke-width="3"/>
+  <text x="650" y="292" text-anchor="middle" font-size="12" fill="#1971c2">PWM 25 kHz (inverted)</text>
+
+  <!-- Qwiic chain -->
+  <polyline points="130,386 130,480 300,480" fill="none" stroke="#666" stroke-width="5"/>
+  <rect x="300" y="455" width="150" height="50" rx="6" fill="#e33c3c" stroke="#a52020" stroke-width="2"/>
+  <text x="375" y="477" text-anchor="middle" fill="#fff" font-weight="bold">Qwiic OLED 1.3"</text>
+  <text x="375" y="495" text-anchor="middle" fill="#fff" font-size="12">0x3D</text>
+  <line x1="450" y1="480" x2="520" y2="480" stroke="#666" stroke-width="5"/>
+  <rect x="520" y="455" width="150" height="50" rx="6" fill="#e33c3c" stroke="#a52020" stroke-width="2"/>
+  <text x="595" y="477" text-anchor="middle" fill="#fff" font-weight="bold">Qwiic Twist</text>
+  <text x="595" y="495" text-anchor="middle" fill="#fff" font-size="12">0x3F</text>
+  <text x="140" y="532" font-size="12" fill="#555">Qwiic cables, daisy-chained (no soldering). The Qwiic rail is switched on by IO45 in firmware.</text>
+</svg>

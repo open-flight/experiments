@@ -5,6 +5,10 @@ BSS138) low-side PWM inverter, Qwiic OLED 1.3" and Qwiic Twist.
 
 Fan connector pins: 1 = GND, 2 = +5 V, 3 = tach, 4 = PWM.
 
+![Wiring diagram: Thing Plus, protoboard with MOSFET and resistors, Noctua fan, Qwiic chain](wiring.svg)
+
+The same circuit as text:
+
 ```
  USB-C ──► Thing Plus ESP32-S3
 
