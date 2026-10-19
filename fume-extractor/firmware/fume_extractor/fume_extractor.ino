@@ -79,7 +79,8 @@ void setup() {
   delay(50);
   Wire.begin();
 
-  oledOk = oled.begin(Wire);
+  // SparkFun 1.3" Qwiic OLED is 0x3D; generic 0.96" SSD1306 128x64 modules are usually 0x3C.
+  oledOk = oled.begin(Wire, 0x3D) || oled.begin(Wire, 0x3C);
   twistOk = twist.begin(Wire);
   if (twistOk) { twist.getDiff(true); twist.isClicked(); }
 

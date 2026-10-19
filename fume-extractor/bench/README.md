@@ -92,6 +92,19 @@ The encoder needs no resistors, because the firmware turns on the internal pull-
 
 **No MOSFET on hand yet?** Leave fan pin 4 unconnected. The Noctua then runs at full speed when powered, so you can still check airflow, the filter fit and the RPM readout. The dial won't change the speed until the MOSFET is in.
 
+## Optional: a cheap 0.96" OLED
+
+A generic **0.96" 128×64 SSD1306 I²C** module works, e.g. this [Hosyond 5-pack](https://www.amazon.com/dp/B09T6SJBV5?tag=colemangolfs-20). It uses the same controller chip as the SparkFun 1.3" screen, and the firmware tries both I²C addresses (0x3D, then 0x3C). Wire it as follows:
+
+| OLED | DevKit |
+|---|---|
+| VCC | 3V3 |
+| GND | GND |
+| SDA | GPIO21 |
+| SCL | GPIO22 |
+
+The boot line then reads `oled=1`. The main case's window is sized for the SparkFun 1.3" board, so this screen is for bench use.
+
 ## Flash
 
 From the repository root:
