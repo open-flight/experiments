@@ -19,6 +19,14 @@ constexpr int PIN_FAN_TACH = 34;
 // No switched Qwiic rail on a DevKit; the OLED and Twist run from 3V3 all the time.
 constexpr int PIN_QWIIC_PWR = -1;
 
+// Bench option: a bare EC11 rotary encoder with push switch instead of the Qwiic Twist.
+// A and B to GPIO32/33, encoder C (middle pin) to GND; switch pins to GPIO27 and GND.
+// Internal pull-ups are used, so no resistors. If the dial moves 2 steps per click, set
+// ENC_STEPS_PER_DETENT to 2; if it runs backwards, set ENC_DIRECTION to -1 (or swap A/B).
+constexpr int PIN_ENC_A = 32;
+constexpr int PIN_ENC_B = 33;
+constexpr int PIN_ENC_SW = 27;
+
 #else
 // SparkFun Thing Plus ESP32-S3 header. Arduino-core names (GPIOn) differ from the
 // ESP32 GPIO numbers, so both are noted. Strapping pins (0, 3, 45, 46) are avoided,
@@ -43,7 +51,15 @@ constexpr int PIN_FAN_TACH = 5;
 // pin but is the board's fixed Qwiic enable (Q_EN), so it is forced by the hardware.
 constexpr int PIN_QWIIC_PWR = 45;
 
+// No bare encoder on the Thing Plus build; the Qwiic Twist is the dial.
+constexpr int PIN_ENC_A = -1;
+constexpr int PIN_ENC_B = -1;
+constexpr int PIN_ENC_SW = -1;
+
 #endif
+
+constexpr int ENC_STEPS_PER_DETENT = 4;  // quadrature edges per click (most EC11s)
+constexpr int ENC_DIRECTION = 1;
 
 constexpr uint32_t PWM_HZ = 25000;   // Intel 4-wire fan spec target
 constexpr uint8_t PWM_BITS = 8;

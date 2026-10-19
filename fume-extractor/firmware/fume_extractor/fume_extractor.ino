@@ -10,6 +10,7 @@
 #include <SparkFun_Qwiic_Twist_Arduino_Library.h>
 #include "config.h"
 #include "fan_logic.h"
+#include "plain_encoder.h"
 
 static Qwiic1in3OLED oled;
 static TWIST twist;
@@ -91,10 +92,12 @@ void setup() {
   applyFan();
   pinMode(PIN_FAN_TACH, INPUT);   // external 10k pull-up to 3V3
   attachInterrupt(digitalPinToInterrupt(PIN_FAN_TACH), onTach, FALLING);
+  plain_encoder::begin();
 
   setTwist(fan::colorFor(ctl->level()));
   Serial.printf("fume-extractor %s\n", FW_VERSION);
-  Serial.printf("oled=%d twist=%d level=%d\n", oledOk, twistOk, ctl->level());
+  Serial.printf("oled=%d twist=%d encoder=%d level=%d\n", oledOk, twistOk,
+                plain_encoder::enabled(), ctl->level());
 }
 
 void loop() {
@@ -109,17 +112,20 @@ void loop() {
   lastTick = now;
 
   bool changed = false;
+  int d = plain_encoder::takeDetents();
+  bool clicked = plain_encoder::takeClick(now);
   if (twistOk) {
-    int16_t d = twist.getDiff(true);
-    bool clicked = twist.isClicked();
-    int before = ctl->level();
-    if (d != 0) ctl->turn(d, now);
-    if (clicked) ctl->click(now);
-    if (ctl->level() != before) {
-      changed = true;
-      applyFan();
-      setTwist(fan::colorFor(ctl->level()));
-    }
+    d += twist.getDiff(true);
+    clicked = twist.isClicked() || clicked;
+  }
+  int before = ctl->level();
+  if (d != 0) ctl->turn(d, now);
+  if (clicked) ctl->click(now);
+  if (ctl->level() != before) {
+    changed = true;
+    applyFan();
+    setTwist(fan::colorFor(ctl->level()));
+    Serial.printf("level=%d (%d%%)\n", ctl->level(), ctl->percent());
   }
 
   if (now - lastRpmMs >= RPM_WINDOW_MS) {
@@ -130,6 +136,7 @@ void loop() {
     rpm = fan::rpmFromPulses(p, now - lastRpmMs);
     lastRpmMs = now;
     stall = ctl->stalled(rpm, now);
+    if (now / 1000 % 5 == 0) Serial.printf("rpm=%lu%s\n", (unsigned long)rpm, stall ? " FAN?" : "");
     if (!stall && lastStall) setTwist(fan::colorFor(ctl->level()));
   }
 

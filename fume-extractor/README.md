@@ -105,6 +105,8 @@ arduino-cli monitor -p /dev/cu.usbmodem101 -c baudrate=115200
 
 ### Using a generic ESP32 DevKit instead
 
+For a quick bench test with a DevKit and a bare EC11 encoder (no OLED, no Twist) and a simple print, see [bench/README.md](bench/README.md).
+
 A classic ESP32 DevKit ("ESP32 Dev Module", ESP32-WROOM-32) works too; the firmware picks its pins automatically when built for that board. Differences from the Thing Plus:
 
 | | Thing Plus ESP32-S3 | ESP32 DevKit |
