@@ -22,6 +22,48 @@ openscad -D 'part="box"' -o stl/box.stl bench_case.scad
 
 ## Wiring (DevKit)
 
+![Bench wiring: DevKit, perfboard with 2N3904 and resistors, fan, EC11 encoder](bench_wiring.svg)
+
+### Perfboard build (10 × 8 holes, columns 1–10, rows A–H)
+
+Place the parts first, then make the joins on the underside (the grey lines in the picture) with clipped legs or bare wire:
+
+1. **10 kΩ** from A2 to A6.
+2. **1 kΩ** from C2 to C6.
+3. **100 kΩ** from D7 to D10. Stand it on end if your resistor is too long for 3 holes.
+4. **2N3904** in E6 (E), E7 (B) and E8 (C), with the flat side toward row H.
+5. Underside joins:
+   - A1–A2 (3V3)
+   - A6–A9 (tach node)
+   - C1–C2 (GPIO4)
+   - C6–C7–D7–E7 (base node)
+   - E6 down to H6 (emitter to GND)
+   - E8–F8 (collector)
+   - D10 down to H10 (100 kΩ to GND)
+   - the whole of row H (GND rail)
+
+### Wires
+
+| # | From | To |
+|---|---|---|
+| 1 | DevKit **3V3** | perfboard A1 |
+| 2 | DevKit **GPIO34** | perfboard A8 |
+| 3 | DevKit **GPIO4** | perfboard C1 |
+| 4 | DevKit **GND** | perfboard H1 |
+| 5 | DevKit **5V / VIN** | fan pin 2 (+5 V) |
+| 6 | fan pin 3 (tach) | perfboard A9 |
+| 7 | fan pin 4 (PWM) | perfboard F8 |
+| 8 | fan pin 1 (GND) | perfboard H9 |
+| 9 | encoder **A** | DevKit **GPIO32** |
+| 10 | encoder **B** | DevKit **GPIO33** |
+| 11 | encoder **C** (middle) | DevKit **GND** |
+| 12 | encoder SW (either pin) | DevKit **GPIO27** |
+| 13 | encoder SW (other pin) | DevKit **GND** |
+
+Before you plug in USB, put a multimeter on continuity and check that **5V–GND** and **3V3–GND** don't beep.
+
+### Signal summary
+
 | From | To |
 |---|---|
 | Encoder **A** (outer pin of the 3-pin side) | GPIO32 |

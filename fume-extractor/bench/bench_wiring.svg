@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 700" width="1100" height="700" font-family="Helvetica, Arial, sans-serif" font-size="13">
+  <title>Bench wiring</title>
+  <rect width="1100" height="700" fill="#ffffff"/>
+  <text x="550" y="34" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">Bench wiring: ESP32 DevKit + EC11 encoder + 2N3904 on perfboard</text>
+  <text x="550" y="56" text-anchor="middle" font-size="12" fill="#666">Match DevKit pins by their printed label (pin order differs between boards). Any GND pin works.</text>
+
+  <!-- ===== DevKit ===== -->
+  <rect x="60" y="100" width="240" height="525" rx="10" fill="#1f5f99" stroke="#123a5e" stroke-width="2"/>
+  <text x="180" y="128" text-anchor="middle" font-weight="bold" fill="#fff">ESP32 DevKit</text>
+  <text x="180" y="146" text-anchor="middle" font-size="11" fill="#cfe2f5">(only the pins used)</text>
+  <rect x="44" y="340" width="22" height="34" rx="6" fill="#bbb" stroke="#555"/>
+  <text x="76" y="352" font-size="11" fill="#fff">USB</text>
+  <text x="76" y="366" font-size="11" fill="#fff">(power)</text>
+  <g fill="#fff" text-anchor="end">
+    <text x="288" y="175">GPIO34</text>
+    <text x="288" y="205">3V3</text>
+    <text x="288" y="265">GPIO4</text>
+    <text x="288" y="385">GND</text>
+    <text x="288" y="425">5V / VIN</text>
+    <text x="288" y="495">GPIO32</text>
+    <text x="288" y="520">GND</text>
+    <text x="288" y="545">GPIO33</text>
+    <text x="288" y="585">GPIO27</text>
+    <text x="288" y="605">GND</text>
+  </g>
+  <g fill="#ffd34d" stroke="#222">
+    <circle cx="300" cy="170" r="5"/><circle cx="300" cy="200" r="5"/><circle cx="300" cy="260" r="5"/>
+    <circle cx="300" cy="380" r="5"/><circle cx="300" cy="420" r="5"/><circle cx="300" cy="490" r="5"/>
+    <circle cx="300" cy="515" r="5"/><circle cx="300" cy="540" r="5"/><circle cx="300" cy="580" r="5"/>
+    <circle cx="300" cy="600" r="5"/>
+  </g>
+
+  <!-- ===== Perfboard (holes: cols 1-10 at x=430..700, rows A-H at y=170..380) ===== -->
+  <rect x="405" y="140" width="320" height="265" rx="6" fill="#d9b779" stroke="#9c7a3c" stroke-width="2"/>
+  <g font-size="10" fill="#7a5a24" text-anchor="middle">
+    <text x="430" y="156">1</text><text x="460" y="156">2</text><text x="490" y="156">3</text><text x="520" y="156">4</text><text x="550" y="156">5</text>
+    <text x="580" y="156">6</text><text x="610" y="156">7</text><text x="640" y="156">8</text><text x="670" y="156">9</text><text x="700" y="156">10</text>
+  </g>
+  <g font-size="10" fill="#7a5a24" text-anchor="middle">
+    <text x="716" y="174">A</text><text x="716" y="204">B</text><text x="716" y="234">C</text><text x="716" y="264">D</text>
+    <text x="716" y="294">E</text><text x="716" y="324">F</text><text x="716" y="354">G</text><text x="716" y="384">H</text>
+  </g>
+  <g fill="#f3e2bd" stroke="#9c7a3c" stroke-width="1">
+    <circle cx="430" cy="170" r="4"/><circle cx="460" cy="170" r="4"/><circle cx="490" cy="170" r="4"/><circle cx="520" cy="170" r="4"/><circle cx="550" cy="170" r="4"/><circle cx="580" cy="170" r="4"/><circle cx="610" cy="170" r="4"/><circle cx="640" cy="170" r="4"/><circle cx="670" cy="170" r="4"/><circle cx="700" cy="170" r="4"/>
+    <circle cx="430" cy="200" r="4"/><circle cx="460" cy="200" r="4"/><circle cx="490" cy="200" r="4"/><circle cx="520" cy="200" r="4"/><circle cx="550" cy="200" r="4"/><circle cx="580" cy="200" r="4"/><circle cx="610" cy="200" r="4"/><circle cx="640" cy="200" r="4"/><circle cx="670" cy="200" r="4"/><circle cx="700" cy="200" r="4"/>
+    <circle cx="430" cy="230" r="4"/><circle cx="460" cy="230" r="4"/><circle cx="490" cy="230" r="4"/><circle cx="520" cy="230" r="4"/><circle cx="550" cy="230" r="4"/><circle cx="580" cy="230" r="4"/><circle cx="610" cy="230" r="4"/><circle cx="640" cy="230" r="4"/><circle cx="670" cy="230" r="4"/><circle cx="700" cy="230" r="4"/>
+    <circle cx="430" cy="260" r="4"/><circle cx="460" cy="260" r="4"/><circle cx="490" cy="260" r="4"/><circle cx="520" cy="260" r="4"/><circle cx="550" cy="260" r="4"/><circle cx="580" cy="260" r="4"/><circle cx="610" cy="260" r="4"/><circle cx="640" cy="260" r="4"/><circle cx="670" cy="260" r="4"/><circle cx="700" cy="260" r="4"/>
+    <circle cx="430" cy="290" r="4"/><circle cx="460" cy="290" r="4"/><circle cx="490" cy="290" r="4"/><circle cx="520" cy="290" r="4"/><circle cx="550" cy="290" r="4"/><circle cx="580" cy="290" r="4"/><circle cx="610" cy="290" r="4"/><circle cx="640" cy="290" r="4"/><circle cx="670" cy="290" r="4"/><circle cx="700" cy="290" r="4"/>
+    <circle cx="430" cy="320" r="4"/><circle cx="460" cy="320" r="4"/><circle cx="490" cy="320" r="4"/><circle cx="520" cy="320" r="4"/><circle cx="550" cy="320" r="4"/><circle cx="580" cy="320" r="4"/><circle cx="610" cy="320" r="4"/><circle cx="640" cy="320" r="4"/><circle cx="670" cy="320" r="4"/><circle cx="700" cy="320" r="4"/>
+    <circle cx="430" cy="350" r="4"/><circle cx="460" cy="350" r="4"/><circle cx="490" cy="350" r="4"/><circle cx="520" cy="350" r="4"/><circle cx="550" cy="350" r="4"/><circle cx="580" cy="350" r="4"/><circle cx="610" cy="350" r="4"/><circle cx="640" cy="350" r="4"/><circle cx="670" cy="350" r="4"/><circle cx="700" cy="350" r="4"/>
+    <circle cx="430" cy="380" r="4"/><circle cx="460" cy="380" r="4"/><circle cx="490" cy="380" r="4"/><circle cx="520" cy="380" r="4"/><circle cx="550" cy="380" r="4"/><circle cx="580" cy="380" r="4"/><circle cx="610" cy="380" r="4"/><circle cx="640" cy="380" r="4"/><circle cx="670" cy="380" r="4"/><circle cx="700" cy="380" r="4"/>
+  </g>
+
+  <!-- Underside solder traces (grey) -->
+  <g stroke="#8a8a8a" stroke-width="6" stroke-linecap="round" opacity="0.85" fill="none">
+    <line x1="430" y1="170" x2="460" y2="170"/>             <!-- A1-A2: 3V3 -->
+    <line x1="580" y1="170" x2="640" y2="170"/>             <!-- A6-A8: tach node -->
+    <line x1="430" y1="230" x2="460" y2="230"/>             <!-- C1-C2: GPIO4 -->
+    <polyline points="580,230 610,230 610,290"/>            <!-- C6-C7-D7-E7: base node -->
+    <line x1="580" y1="290" x2="580" y2="380"/>             <!-- E6-H6: emitter to GND -->
+    <line x1="640" y1="290" x2="640" y2="320"/>             <!-- E8-F8: collector -->
+    <line x1="700" y1="260" x2="700" y2="380"/>             <!-- D10-H10: 100k to GND -->
+    <line x1="430" y1="380" x2="700" y2="380"/>             <!-- row H: GND rail -->
+  </g>
+
+  <!-- Resistors (top side) -->
+  <g stroke="#333" stroke-width="2">
+    <line x1="460" y1="170" x2="580" y2="170"/>
+    <line x1="460" y1="230" x2="580" y2="230"/>
+    <line x1="610" y1="260" x2="700" y2="260"/>
+  </g>
+  <rect x="488" y="162" width="64" height="16" rx="5" fill="#e8d2a6" stroke="#333" stroke-width="1.5"/>
+  <text x="520" y="174" text-anchor="middle" font-size="11" fill="#222">10 kΩ</text>
+  <rect x="488" y="222" width="64" height="16" rx="5" fill="#e8d2a6" stroke="#333" stroke-width="1.5"/>
+  <text x="520" y="234" text-anchor="middle" font-size="11" fill="#222">1 kΩ</text>
+  <rect x="625" y="252" width="60" height="16" rx="5" fill="#e8d2a6" stroke="#333" stroke-width="1.5"/>
+  <text x="655" y="264" text-anchor="middle" font-size="11" fill="#222">100 kΩ</text>
+
+  <!-- 2N3904 (flat side toward the bottom of the picture) -->
+  <path d="M566,303 L654,303 L654,284 Q654,266 610,266 Q566,266 566,284 Z" fill="#222"/>
+  <text x="610" y="281" text-anchor="middle" font-size="10" fill="#fff">2N3904</text>
+  <g font-size="10" font-weight="bold" fill="#ffd34d" text-anchor="middle">
+    <text x="580" y="300">E</text><text x="610" y="300">B</text><text x="640" y="300">C</text>
+  </g>
+
+  <!-- ===== Fan ===== -->
+  <rect x="820" y="140" width="190" height="300" rx="10" fill="#7a4e2d" stroke="#4d2f19" stroke-width="2"/>
+  <text x="915" y="128" text-anchor="middle" font-weight="bold" fill="#222">Noctua NF-A12x25 5V PWM</text>
+  <g fill="#fff">
+    <text x="834" y="175">pin 3 · TACH</text>
+    <text x="834" y="325">pin 4 · PWM</text>
+    <text x="834" y="385">pin 1 · GND</text>
+    <text x="834" y="425">pin 2 · +5 V</text>
+  </g>
+  <g fill="#ffd34d" stroke="#222">
+    <circle cx="820" cy="170" r="5"/><circle cx="820" cy="320" r="5"/><circle cx="820" cy="380" r="5"/><circle cx="820" cy="420" r="5"/>
+  </g>
+
+  <!-- ===== Encoder ===== -->
+  <rect x="480" y="470" width="120" height="100" rx="6" fill="#2f9e8f" stroke="#1d6b60" stroke-width="2"/>
+  <circle cx="540" cy="520" r="16" fill="#c9c9c9" stroke="#777"/>
+  <text x="540" y="462" text-anchor="middle" font-weight="bold" fill="#222">EC11 encoder (top view)</text>
+  <g fill="#fff" font-size="11">
+    <text x="486" y="494">A</text><text x="486" y="519">C</text><text x="486" y="544">B</text>
+    <text x="586" y="504" text-anchor="end">SW</text><text x="586" y="534" text-anchor="end">SW</text>
+  </g>
+  <g fill="#ffd34d" stroke="#222">
+    <circle cx="480" cy="490" r="5"/><circle cx="480" cy="515" r="5"/><circle cx="480" cy="540" r="5"/>
+    <circle cx="600" cy="500" r="5"/><circle cx="600" cy="530" r="5"/>
+  </g>
+
+  <!-- ===== Wires (top side) ===== -->
+  <g fill="none" stroke-width="3.5" stroke-linejoin="round">
+    <polyline points="300,170 395,170 395,124 640,124 640,170" stroke="#e0b400"/>   <!-- GPIO34 → A8 -->
+    <line x1="300" y1="200" x2="380" y2="200" stroke="#f08c00"/>
+    <polyline points="380,200 380,190 430,190 430,170" stroke="#f08c00"/>            <!-- 3V3 → A1 -->
+    <polyline points="300,260 395,260 395,230 430,230" stroke="#1971c2"/>             <!-- GPIO4 → C1 -->
+    <line x1="300" y1="380" x2="430" y2="380" stroke="#111"/>                         <!-- GND → H1 -->
+    <line x1="300" y1="420" x2="820" y2="420" stroke="#d62828"/>                      <!-- 5V → fan pin 2 -->
+    <polyline points="820,170 760,170 760,124 670,124 670,170" stroke="#e0b400"/>   <!-- fan tach → A9 -->
+    <line x1="820" y1="320" x2="640" y2="320" stroke="#1971c2"/>                      <!-- fan PWM → F8 -->
+    <polyline points="820,380 760,380 760,395 670,395 670,380" stroke="#111"/>      <!-- fan GND → H9 -->
+    <line x1="300" y1="490" x2="480" y2="490" stroke="#7048e8"/>                      <!-- enc A → GPIO32 -->
+    <line x1="300" y1="515" x2="480" y2="515" stroke="#111"/>                         <!-- enc C → GND -->
+    <line x1="300" y1="540" x2="480" y2="540" stroke="#ae3ec9"/>                      <!-- enc B → GPIO33 -->
+    <polyline points="600,530 615,530 615,580 300,580" stroke="#2b8a3e"/>             <!-- enc SW → GPIO27 -->
+    <polyline points="600,500 630,500 630,600 300,600" stroke="#111"/>                <!-- enc SW → GND -->
+  </g>
+  <!-- tach node now spans A6..A9 -->
+  <line x1="640" y1="170" x2="670" y2="170" stroke="#8a8a8a" stroke-width="6" stroke-linecap="round" opacity="0.85"/>
+
+  <!-- ===== Legend ===== -->
+  <g font-size="12" fill="#333">
+    <rect x="760" y="470" width="320" height="200" rx="8" fill="#f7f7f7" stroke="#ddd"/>
+    <text x="776" y="494" font-weight="bold">Key (perfboard drawn from the top, 10 × 8 holes)</text>
+    <line x1="776" y1="514" x2="806" y2="514" stroke="#8a8a8a" stroke-width="6" stroke-linecap="round"/>
+    <text x="816" y="518">solder trace on the underside</text>
+    <line x1="776" y1="538" x2="806" y2="538" stroke="#333" stroke-width="3.5"/>
+    <text x="816" y="542">insulated wire (colour = signal)</text>
+    <text x="776" y="568">2N3904: flat side toward you, legs down = E B C.</text>
+    <text x="776" y="588">Encoder A/B can be swapped (only flips direction).</text>
+    <text x="776" y="608">The two SW pins are interchangeable.</text>
+    <text x="776" y="628">Before powering: continuity-check 5V–GND</text>
+    <text x="776" y="646">and 3V3–GND (neither should beep).</text>
+  </g>
+</svg>
