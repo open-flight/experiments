@@ -1,7 +1,7 @@
 # Wiring
 
 SparkFun Thing Plus ESP32-S3, Noctua NF-A12x25 5V PWM fan (4-pin), 2N7000 (or AO3400 /
-BSS138) low-side PWM inverter, Qwiic OLED 1.3" and Qwiic Twist.
+BSS138, or an NPN such as the 2N3904) low-side PWM inverter, Qwiic OLED 1.3" and Qwiic Twist.
 
 Fan connector pins: 1 = GND, 2 = +5 V, 3 = tach, 4 = PWM.
 
@@ -40,6 +40,12 @@ Notes:
   choice: **AO3400** (V_GS(th) 1.45 V max) or **BSS138** (1.5 V max). Both are SOT-23, so
   mount it on a SOT-23 adapter and wire it by pin name (gate, drain, source): the TO-92
   2N7000's pin order is different. The diagram is the same for all three.
+- **NPN transistor instead (2N3904, 2N2222, BC547):** it works just as well here, since the
+  fan's PWM line only sinks a few mA. Two changes: use **1 kΩ** (1–2.2 kΩ) instead of
+  100 Ω in series with the base (a base draws current; 100 Ω would pull ~26 mA from the
+  pin), and keep the 100 kΩ base-to-GND pull-down. Emitter → GND, collector → fan pin 4.
+  2N3904 pinout (TO-92, flat side facing you, legs down): **E B C** left to right. No
+  firmware change: it inverts the same way.
 - The MOSFET inverts: gate high pulls fan PWM low. The firmware compensates
   (`gateDuty8()`), so 100% = gate duty 0.
 - The fan's PWM pin is pulled up internally, so a floating gate means full speed
@@ -58,7 +64,7 @@ Flash the sketch and confirm each item. The serial monitor needs the sketch buil
       signal: check the gate wiring and the MOSFET. Also check the other end: Off must read
       0 rpm, and the 10% RPM must be well below the 50% RPM. If Off doesn't stop the fan, or
       the low speeds run fast, the MOSFET isn't fully switching on (fit an AO3400 or BSS138
-      instead of the 2N7000).
+      instead of the 2N7000; with a 2N3904, check the base resistor is 1 kΩ, not more than 2.2 kΩ).
 - [ ] Run at 100% for 10 minutes. There must be no brownout or reset: the serial monitor shows
       no reboot (the `fume-extractor` boot line doesn't appear again and the port doesn't drop).
       VUSB, measured with a meter between fan pins 2 and 1, stays above 4.5 V. If it doesn't, the

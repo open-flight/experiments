@@ -64,7 +64,7 @@
   <!-- PWM path: IO4 → 100R → gate, 100k pull-down -->
   <line x1="235" y1="330" x2="300" y2="330" stroke="#1971c2" stroke-width="3"/>
   <rect x="300" y="323" width="44" height="14" fill="#fff" stroke="#333" stroke-width="2"/>
-  <text x="322" y="317" text-anchor="middle" font-size="12" fill="#333">100 Ω</text>
+  <text x="322" y="317" text-anchor="middle" font-size="12" fill="#333">100 Ω (NPN: 1 kΩ)</text>
   <line x1="344" y1="330" x2="505" y2="330" stroke="#1971c2" stroke-width="3"/>
   <circle cx="420" cy="330" r="5" fill="#222"/>
   <line x1="420" y1="330" x2="420" y2="350" stroke="#111" stroke-width="2"/>
@@ -93,6 +93,8 @@
   <text x="556" y="330" font-size="12" font-weight="bold" fill="#333">N-MOSFET</text>
   <text x="556" y="345" font-size="11" fill="#555">AO3400 / BSS138</text>
   <text x="556" y="359" font-size="11" fill="#555">(or 2N7000)</text>
+  <text x="556" y="373" font-size="11" fill="#555">2N3904 NPN: base 1 kΩ</text>
+  <text x="556" y="387" font-size="11" fill="#555">G→B, D→C, S→E</text>
   <g stroke="#111" stroke-width="2">
     <line x1="516" y1="400" x2="544" y2="400"/><line x1="521" y1="406" x2="539" y2="406"/><line x1="526" y1="412" x2="534" y2="412"/>
   </g>

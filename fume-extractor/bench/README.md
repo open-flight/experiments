@@ -32,7 +32,7 @@ openscad -D 'part="box"' -o stl/box.stl bench_case.scad
 | Fan pin 2 (+5 V) | `5V` / `VIN` |
 | Fan pin 1 (GND) | GND |
 | Fan pin 3 (tach) | GPIO34, **plus a 10 kΩ resistor from GPIO34 to 3V3** |
-| Fan pin 4 (PWM) | MOSFET drain (see below) |
+| Fan pin 4 (PWM) | MOSFET drain or NPN collector (see below) |
 
 The encoder needs no resistors, because the firmware turns on the internal pull-ups.
 
@@ -40,6 +40,13 @@ The encoder needs no resistors, because the firmware turns on the internal pull-
 - gate to GPIO4 through 100 Ω, plus 100 kΩ from the gate to GND
 - source to GND
 - drain to fan pin 4
+
+**Using a 2N3904 (or other small NPN) instead:**
+- base to GPIO4 through **1 kΩ** (not 100 Ω), plus 100 kΩ from the base to GND
+- emitter to GND
+- collector to fan pin 4
+
+2N3904 pinout: flat side facing you, legs down, **E B C** from left to right. The firmware is the same.
 
 **No MOSFET on hand yet?** Leave fan pin 4 unconnected. The Noctua then runs at full speed when powered, so you can still check airflow, the filter fit and the RPM readout. The dial won't change the speed until the MOSFET is in.
 
