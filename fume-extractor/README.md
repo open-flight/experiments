@@ -34,8 +34,8 @@ The cable needs a **slim USB-C plug body**. The opening in the case's side wall 
 | Qty | Part | Notes |
 |---|---|---|
 | 1 | [SparkFun Thing Plus ESP32-S3](https://www.sparkfun.com/sparkfun-thing-plus-esp32-s3.html?affiliate_code=rfxlS0eYyY) | Main board. USB-C power input, one Qwiic port. |
-| 1 | [SparkFun Qwiic OLED 1.3" 128x64](https://www.sparkfun.com/sparkfun-qwiic-oled-1-3in-128x64.html?affiliate_code=rfxlS0eYyY) | Address 0x3D |
-| 1 | [SparkFun Qwiic Twist RGB rotary encoder](https://www.sparkfun.com/sparkfun-qwiic-twist-rgb-rotary-encoder-breakout.html?affiliate_code=rfxlS0eYyY) | Address 0x3F |
+| 1 | [SparkFun Qwiic OLED 1.3" 128x64](https://www.sparkfun.com/sparkfun-qwiic-oled-1-3in-128x64.html?affiliate_code=rfxlS0eYyY) | Address 0x3D. The original screen option. **The current case doesn't fit it:** the pod lid now takes the 0.96" module below. |
+| 1 | [SparkFun Qwiic Twist RGB rotary encoder](https://www.sparkfun.com/sparkfun-qwiic-twist-rgb-rotary-encoder-breakout.html?affiliate_code=rfxlS0eYyY) | Address 0x3F. The original dial option. **The current case doesn't fit it:** the pod lid now takes a bare EC11 (below). |
 | 1 | [SparkFun Qwiic Cable Kit](https://www.sparkfun.com/sparkfun-qwiic-cable-kit.html?affiliate_code=rfxlS0eYyY) | |
 
 ### Amazon
@@ -54,7 +54,9 @@ These are search links, not fixed product pages, so you can pick a well-reviewed
 | 1 set | [M3 screws](https://www.amazon.com/s?k=M3+screw+assortment+button+head+flat+head+ISO+7380&tag=colemangolfs-20) | 4 x M3x30 button head, 4 x M3x8 flat head |
 | 4 | [M3 shoulder screws](https://www.amazon.com/s?k=M3+shoulder+screw+4mm+shoulder+6mm&tag=colemangolfs-20) | 4 mm shoulder x 6 mm, M3 thread 5 mm or shorter |
 | 8 | [6 x 3 mm disc magnets](https://www.amazon.com/s?k=6x3mm+neodymium+disc+magnets+N52&tag=colemangolfs-20) | Check polarity before gluing |
-| 1 set | [Small M2 and M2.5 screws](https://www.amazon.com/s?k=M2+M2.5+pan+head+screw+assortment&tag=colemangolfs-20) | M2.5 x 4, x 5, x 8 and M2 x 5 |
+| 1 set | [Small M2 and M2.5 screws](https://www.amazon.com/s?k=M2+M2.5+pan+head+screw+assortment&tag=colemangolfs-20) | M2.5 x 5, M2 x 5, and 4 x M2 x 4 self-tapping for the OLED |
+| 1 | [0.96" 128x64 SSD1306 I2C OLED, Hosyond 5-pack](https://www.amazon.com/dp/B09T6SJBV5?tag=colemangolfs-20) | **The screen the case fits.** 4-pin header (GND, VCC, SCL, SDA). Usually address 0x3C (the firmware tries 0x3D, then 0x3C). Mounts with 4 x M2 x 4 self-tapping screws. Wiring: [bench/README.md](bench/README.md#optional-a-cheap-096-oled) |
+| 1 | [EC11 rotary encoder with push switch](https://www.amazon.com/s?k=EC11+rotary+encoder+push+switch+20mm+D+shaft&tag=colemangolfs-20) | **The dial the case fits.** Bare 5-pin panel-mount EC11, M7 x 0.75 bushing with nut, 6 mm D shaft (20 mm from the mounting face; a shorter one needs `enc_shaft_L` changed and the knob re-exported). Wiring on a DevKit: A → GPIO32, B → GPIO33, switch → GPIO27, C and the other switch pin → GND; see [bench/README.md](bench/README.md). **On the Thing Plus, the bare encoder's pins aren't assigned yet**: the Thing Plus build sets `PIN_ENC_A/B/SW` to -1 in `firmware/fume_extractor/config.h` and only reads the Qwiic Twist. |
 | 1 | [Hookup wire](https://www.amazon.com/s?k=22awg+silicone+hookup+wire+kit&tag=colemangolfs-20) | |
 | 1 | Steel flat bar, 25 x 12 mm (or 1" x 1/2"), about 250 mm | Base ballast, about 575 g. Cut one 140 mm and two 52 mm pieces. Any hardware store. **Needed** so a press on the dial doesn't tip the case backward. |
 

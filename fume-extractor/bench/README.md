@@ -103,7 +103,7 @@ A generic **0.96" 128×64 SSD1306 I²C** module works, e.g. this [Hosyond 5-pack
 | SDA | GPIO21 |
 | SCL | GPIO22 |
 
-The boot line then reads `oled=1`. The main case's window is sized for the SparkFun 1.3" board, so this screen is for bench use.
+The boot line then reads `oled=1`. The main case's pod lid is now sized for this 0.96" module (and a bare EC11), so the same screen moves into the full case.
 
 ## Flash
 

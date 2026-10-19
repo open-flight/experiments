@@ -4,11 +4,11 @@
 //         pod_lid (sloped control face), base (tilt stand, alias "kickstand"), knob
 //
 //  Export a part:   openscad -D 'part="shell"' -o shell.stl fume_extractor_case.scad
-//  part = "assembly" | "exploded" | "poses" | "shell" | "frame" | "pod_lid" | "base" | "knob"
+//  part = "assembly" | "exploded" | "poses" | "pod_face" | "shell" | "frame" | "pod_lid" | "base" | "knob"
 //  Fit checks (should all be empty):
 //         "chk_shell" | "chk_frame" | "chk_pod_lid" | "chk_kickstand" (= base + screws + ballast vs
 //         the posed case at 0/15/30) |
-//         "chk_shell_frame" | "chk_shell_pod_lid" | "chk_desk" | "chk_ghosts"
+//         "chk_shell_frame" | "chk_shell_pod_lid" | "chk_desk" | "chk_ghosts" | "chk_knob"
 //  Area helpers (2D, use with --summary area): "area_rear_open" | "area_rear_total" |
 //         "area_front_open" | "area_front_total"
 //
@@ -83,25 +83,52 @@ tp_usb_overhang = 1.5;                       // USB-C shell past board edge
 tp_sd_x  = 11.6;                             // microSD card centre (bottom side)
 tp_standoff = 2.4;                           // clears the microSD socket under the board
 
-// Qwiic OLED 1.3" (Eagle): body 35.56 x 25.40 + corner ears, holes 30.48 x 31.75
-oled_w = 35.56; oled_body_h = 25.40;
-oled_holes_dx = 30.48; oled_holes_dy = 31.75;
-oled_glass = [34.5, 23.0];
-oled_glass_t = 1.6;  // glass + tape; sets boss length (verify with calipers)
-oled_window = [32.0, 20.0];
+// Generic 0.96" 128x64 SSD1306 I2C OLED (Hosyond etc.), 4-pin header GND/VCC/SCL/SDA on the top
+// edge. Typical listing dimensions -- VERIFY WITH CALIPERS, these modules vary by vendor.
+// "Top" = header edge = up the slope. Mounted with 4 M2 x 4 self-tapping screws from behind,
+// through the PCB into printed bosses (1.6 mm pilots).
+oled_pcb      = [27.3, 27.8, 1.2];   // [W, H, thickness]                        (verify)
+oled_hole_in  = 2.0;                 // hole centres from each PCB edge -> 23.3 x 23.8 (verify)
+oled_glass    = [26.7, 19.3, 1.5];   // glass panel [W, H, thickness incl. tape] (verify)
+oled_glass_top = 4.5;                // glass top edge below the PCB top edge   (verify)
+oled_aa       = [21.74, 10.86];      // active (lit) area
+oled_aa_top   = 1.6;                 // active area top edge below the glass top edge (verify)
+oled_window   = [24.0, 13.0];        // face window = active area + ~1 mm per side
+oled_chamfer  = 1.0;                 // outside chamfer around the window
+oled_pocket   = 0.6;                 // glass recess into the inside of the face (skin in front of the glass = lid_t - this)
+oled_hdr_in   = 1.5;                 // header pin row from the PCB top edge     (verify)
+oled_hdr_n    = 4;                   // 0.1" pins
+oled_hdr_h    = 2.5;                 // header plastic behind the PCB
+oled_hdr_pins = 6.0;                 // pins past the plastic
+oled_stub     = 1.2;                 // pin stubs + solder on the glass side (relieved in the face)
+oled_dupont   = 15;                  // clearance behind the PCB at the header for Dupont housings
+oled_back     = 1.5;                 // SMD parts on the back of the PCB
+oled_pilot    = 1.6;                 // M2 self-tapping pilot
+oled_boss_d   = 3.6;                 // the bottom bosses sit 0.2 mm from the glass edge: keep <= 3.6
 
-// Qwiic Twist (Eagle): 30.48 x 25.40, holes 25.40 x 20.32; encoder body 12.4x13.4x7.8
-tw_w = 30.48; tw_h = 25.40;
-tw_holes_dx = 25.40; tw_holes_dy = 20.32;
-enc_body = [12.4, 13.4, 7.8];
-enc_hole_d = 9.8;    // clears M9 bushing; plain 6 mm shaft passes too
-back_keepout = 3.0;  // pins / Qwiic plugs behind the OLED and Twist boards (estimate)
+// Bare EC11 rotary encoder with push switch (panel mount, M7 x 0.75 bushing, 6 mm D shaft).
+// Body sits in a shallow pocket so the face is enc_face_t at the bushing: bushing 5 mm >=
+// face + washer + nut. 3 encoder pins on one edge, 2 switch pins on the other, 2 side legs.
+enc_body   = [12.5, 13.5, 6.5];      // [W (legs side to side), D (pin edge to pin edge), H behind the panel]
+enc_bush   = [7.0, 5.0];             // threaded bushing [d, length]
+enc_hole   = 7.4;                    // panel hole for the M7 bushing
+enc_pocket = 0.4;                    // body pocket into the inside of the face
+enc_face_t = lid_t - enc_pocket;     // face thickness at the bushing (must be <= 2.5)
+enc_shaft_d = 6.0;
+enc_flat   = 4.5;                    // D-flat: shaft is 4.5 across the flat
+enc_shaft_L = 20;                    // shaft length from the mounting face (generic "L20" = 15 mm past the bushing) (verify)
+enc_flat_L = 12;                     // length of the flat, from the shaft tip (verify)
+enc_pins_L = 4.0;                    // pins past the body back
+enc_wires  = 8.0;                    // soldered wires / heat-shrink behind the pins
+enc_washer = [12.0, 0.5];            // [OD, thickness]
+enc_nut    = [10.0, 2.0];            // M7 x 0.75 hex nut [across flats, thickness]
 
 // Protoboard (~50 x 30). Hole positions are an estimate: measure yours.
 proto = [50, 30, 1.6];
 proto_hole_in = 2.5;
 proto_standoff = 3.0;
-proto_parts_h = 15;  // tallest part incl. the mated fan plug
+proto_parts_h = 15;  // tallest part incl. the mated fan plug: keep the fan header on the rear half
+proto_front_h = 12;  // parts on the front half (under the OLED): resistors, TO-92, wire links
 
 // ---------- tilt base ----------
 // The case hangs between two cheeks of a base plate on M3 shoulder screws: one pivot screw and
@@ -164,8 +191,21 @@ proto_holes = [for (hx=[proto_hole_in, proto[0]-proto_hole_in], hy=[proto_hole_i
 cable_slot = [64, 12];                       // [x0, width] fan cable / plug pass-through into the pod
 
 // pod lid layout (slope coords: x, s up the slope)
-oled_cx = 80;  oled_cs = 24;
-tw_cx   = 118; tw_cs   = 26.7;
+// The OLED window and the knob are a balanced pair: both at the middle of the slope (face_cs),
+// pair_dx either side of the pod's centre line.
+pair_dx = 22;  face_cs = pod_L/2;
+win_cx  = cx - pair_dx; win_cs = face_cs;       // window centre = active-area centre
+enc_cx  = cx + pair_dx; enc_cs = face_cs;       // encoder / knob axis
+oled_top  = win_cs + oled_glass_top + oled_aa_top + oled_aa[1]/2;   // PCB top (header) edge, s
+oled_s0   = oled_top - oled_pcb[1];                                  // PCB bottom edge, s
+glass_s1  = oled_top - oled_glass_top;  glass_s0 = glass_s1 - oled_glass[1];
+n_glass   = -(lid_t - oled_pocket);             // glass front face (n)
+n_pcb_f   = n_glass - oled_glass[2];            // PCB front face
+n_pcb_b   = n_pcb_f - oled_pcb[2];              // PCB back face
+oled_holes = [for (sx=[-1,1], s=[oled_top - oled_hole_in, oled_s0 + oled_hole_in])
+              [win_cx + sx*(oled_pcb[0]/2 - oled_hole_in), s]];
+hdr_s     = oled_top - oled_hdr_in;
+n_enc     = -enc_face_t;                        // encoder mounting face (n)
 lid_screws = [for (x=[wall + blk_w/2, W - wall - blk_w/2], s=lid_screw_s) [x, s]];
 
 // tilt base
@@ -320,37 +360,30 @@ module pod_lid() {
         union() {
             intersection() { outer(); lid_band(); slope_frame() translate([-1, 0, -lid_t]) cube([W + 2, 200, lid_t]); }
             slope_frame() {
-                // Twist bosses (board screws on from behind; encoder body touches the lid)
-                for (sx=[-1,1], sy=[-1,1])
-                    translate([tw_cx + sx*tw_holes_dx/2, tw_cs + sy*tw_holes_dy/2, -lid_t - enc_body[2]])
-                        cylinder(d=5.0, h=enc_body[2] + 0.01);
-                // OLED bosses at the ear holes (glass presses on the lid)
-                for (sx=[-1,1], sy=[-1,1])
-                    translate([oled_cx + sx*oled_holes_dx/2, oled_cs + sy*oled_holes_dy/2, -lid_t - oled_glass_t])
-                        cylinder(d=4.8, h=oled_glass_t + 0.01);
-                // OLED glass locating frame
-                translate([oled_cx, oled_cs, -lid_t - 1.0]) linear_extrude(1.01) difference() {
-                    square([oled_glass[0] + 2*clr + 2.4, oled_glass[1] + 2*clr + 2.4], center=true);
-                    square([oled_glass[0] + 2*clr, oled_glass[1] + 2*clr], center=true);
-                    square([oled_glass[0] + 10, 12], center=true);     // gaps for the flex tail + ears
-                }
+                // OLED bosses: from the lid's inside face back to the PCB's front face (the glass
+                // sits in its pocket, so the PCB lands on the bosses)
+                for (h = oled_holes) translate([h[0], h[1], n_pcb_f])
+                    cylinder(d=oled_boss_d, h=-lid_t - n_pcb_f + 0.01);
             }
         }
         slope_frame() {
-            for (sx=[-1,1], sy=[-1,1]) {
-                translate([tw_cx + sx*tw_holes_dx/2, tw_cs + sy*tw_holes_dy/2, -lid_t - enc_body[2] - 1])
-                    cylinder(d=m25_pilot, h=enc_body[2] + 1 + lid_t - 0.6);
-                translate([oled_cx + sx*oled_holes_dx/2, oled_cs + sy*oled_holes_dy/2, -lid_t - oled_glass_t - 1])
-                    cylinder(d=m25_pilot, h=oled_glass_t + 1 + lid_t - 0.6);
+            // OLED: M2 pilots (stop 0.6 mm short of the face), glass pocket, header solder relief
+            for (h = oled_holes) translate([h[0], h[1], n_pcb_f - 1]) cylinder(d=oled_pilot, h=-0.6 - n_pcb_f + 1);
+            translate([win_cx - oled_glass[0]/2 - clr, glass_s0 - clr, -lid_t - 0.01])
+                cube([oled_glass[0] + 2*clr, oled_glass[1] + 2*clr, oled_pocket + 0.01]);
+            translate([win_cx - oled_hdr_n*2.54/2 - 0.75, hdr_s - 1.5, -lid_t - 0.01])
+                cube([oled_hdr_n*2.54 + 1.5, 3.0, oled_pocket + 0.01]);
+            // OLED window over the active area (not the glass centre), with an outside chamfer
+            translate([win_cx, win_cs, 0]) hull() {
+                translate([0, 0, n_glass - 0.01]) linear_extrude(max(0.01, -n_glass - oled_chamfer + 0.01))
+                    square(oled_window, center=true);
+                translate([0, 0, 0.01]) linear_extrude(0.01)
+                    square([oled_window[0] + 2*oled_chamfer + 0.02, oled_window[1] + 2*oled_chamfer + 0.02], center=true);
             }
-            // OLED window with an outside chamfer
-            translate([oled_cx, oled_cs, -lid_t - 0.01]) hull() {
-                linear_extrude(0.01) square(oled_window, center=true);
-                translate([0, 0, lid_t + 0.02]) linear_extrude(0.01)
-                    square([oled_window[0] + 2*lid_t, oled_window[1] + 2*lid_t], center=true);
-            }
-            // encoder shaft / bushing
-            translate([tw_cx, tw_cs, -lid_t - 1]) cylinder(d=enc_hole_d, h=lid_t + 2);
+            // EC11: body pocket (thins the face to enc_face_t) + bushing hole
+            translate([enc_cx - enc_body[0]/2 - clr, enc_cs - enc_body[1]/2 - clr, -lid_t - 0.01])
+                cube([enc_body[0] + 2*clr, enc_body[1] + 2*clr, enc_pocket + 0.01]);
+            translate([enc_cx, enc_cs, -lid_t - 1]) cylinder(d=enc_hole, h=lid_t + 2);
             // lid screws (countersunk M3)
             for (p = lid_screws) translate([p[0], p[1], -lid_t - 1]) {
                 cylinder(d=m3_clear, h=lid_t + 2);
@@ -405,9 +438,19 @@ module comp_screws(i) color([0.6, 0.6, 0.6]) for (h = [[piv[0], piv_zw], lock_ho
 }
 
 // =====================================================================
-// KNOB - copied from open-gps (6 mm shaft, +0.15 bore, 3 crush ribs, light pipe)
+// KNOB - for the EC11's 6 mm D shaft: +0.15 round bore, 3 crush ribs on the round side, and a
+// D-flat at 4.5 mm over the part of the bore the shaft's flat reaches. Press it on until the
+// shaft bottoms in the bore: that leaves knob_gap above the nut for the push switch's travel.
 // =====================================================================
-knob_d = 18; knob_h = 12; shaft_d = 6.0; bore_depth = 10;
+knob_d = 18; knob_gap = 1.0; knob_top = 3.0; shaft_d = enc_shaft_d;
+knob_z0    = enc_washer[1] + enc_nut[1] + knob_gap;   // knob bottom above the face (n)
+shaft_tip  = n_enc + enc_shaft_L;                      // shaft tip above the face (n)
+bore_depth = shaft_tip - knob_z0;
+knob_h     = bore_depth + knob_top;
+flat_zone  = min(bore_depth - 0.6, enc_flat_L - 0.5); // D part of the bore, measured down from its bottom
+echo(str("EC11: face ", enc_face_t, " at the bushing, bushing spare thread ",
+         enc_bush[1] - enc_face_t - enc_washer[1] - enc_nut[1], "; shaft ", shaft_tip - enc_washer[1] - enc_nut[1],
+         " past face+nut; knob bore ", bore_depth, " (D for the top ", flat_zone, "), knob ", knob_h, " tall"));
 module knob() {
     difference() {
         union() {
@@ -415,13 +458,18 @@ module knob() {
             translate([0,0,knob_h-1]) cylinder(d1=knob_d, d2=knob_d-2, h=1);
             for (a=[0:15:359]) rotate(a) translate([knob_d/2, 0, 0]) cylinder(d=1.2, h=knob_h - 1, $fn=12);
         }
-        translate([0,0,-0.01]) cylinder(d=shaft_d + 0.15, h=bore_depth);
+        translate([0,0,-0.01]) cylinder(d=shaft_d + 0.15, h=bore_depth + 0.01);
         translate([0,0,-0.01]) cylinder(d1=shaft_d + 1, d2=shaft_d + 0.15, h=0.6);
-        translate([0,0,bore_depth - 0.1]) cylinder(d=3, h=knob_h);        // light pipe to the top
     }
-    // crush ribs
-    for (a=[0:120:359]) rotate(a) translate([shaft_d/2 + 0.08, 0, 0]) cylinder(d=0.6, h=bore_depth - 1, $fn=8);
+    // D-flat (the shaft's flat faces +x)
+    translate([0, 0, bore_depth - flat_zone]) intersection() {
+        cylinder(d=shaft_d + 0.2, h=flat_zone);
+        translate([enc_flat - shaft_d/2, -shaft_d, 0]) cube([shaft_d, 2*shaft_d, flat_zone]);
+    }
+    // crush ribs, on the round side only
+    for (a=[120:60:240]) rotate(a) translate([shaft_d/2 + 0.08, 0, 0]) cylinder(d=0.6, h=bore_depth - 1, $fn=8);
 }
+module knob_placed() slope_frame() translate([enc_cx, enc_cs, knob_z0]) knob();
 
 // =====================================================================
 // ghost components for fit checks
@@ -450,29 +498,64 @@ module comp_floor() {
     }
     color("green", 0.9) translate([proto_x0, proto_y0, z_pb]) {
         cube(proto);
-        translate([2, 2, proto[2]]) cube([proto[0] - 4, proto[1] - 4, proto_parts_h]);   // parts + fan plug
+        translate([2, 2, proto[2]]) cube([proto[0] - 4, proto[1]/2 - 2, proto_front_h]);              // front half: low parts
+        translate([2, proto[1]/2, proto[2]]) cube([proto[0] - 4, proto[1]/2 - 2, proto_parts_h]);     // rear half: fan header + plug
         translate([5, 5, -1.5]) cube([proto[0] - 10, proto[1] - 10, 1.5]);             // solder joints
     }
 }
-module comp_lid() slope_frame() {
-    // OLED: glass on the lid, board behind it
-    color("black") translate([oled_cx - oled_glass[0]/2, oled_cs - oled_glass[1]/2, -lid_t - oled_glass_t])
-        cube([oled_glass[0], oled_glass[1], oled_glass_t]);
-    color("red", 0.9) translate([0, 0, -lid_t - oled_glass_t - 1.6]) {
-        translate([oled_cx - oled_w/2, oled_cs - oled_body_h/2, 0]) cube([oled_w, oled_body_h, 1.6]);
-        for (sx=[-1,1], sy=[-1,1]) translate([oled_cx + sx*oled_holes_dx/2, oled_cs + sy*oled_holes_dy/2, 0])
-            cylinder(d=5.08, h=1.6);
-        translate([oled_cx - oled_w/2 + 2, oled_cs - oled_body_h/2 + 2, -back_keepout])
-            cube([oled_w - 4, oled_body_h - 4, back_keepout]);
+// 0.96" SSD1306 module: glass in the face's pocket, PCB on the bosses, header + Dupont plugs behind
+module comp_oled() slope_frame() {
+    color("black") translate([win_cx - oled_glass[0]/2, glass_s0, n_pcb_f]) cube(oled_glass);
+    // active area, drawn just proud of the glass so it shows through the window
+    color([0.35, 0.75, 1.0]) translate([win_cx - oled_aa[0]/2, win_cs - oled_aa[1]/2, n_glass - 0.2])
+        cube([oled_aa[0], oled_aa[1], 0.21]);
+    color([0.1, 0.25, 0.65]) difference() {
+        translate([win_cx - oled_pcb[0]/2, oled_s0, n_pcb_b]) cube(oled_pcb);
+        for (h = oled_holes) translate([h[0], h[1], n_pcb_b - 1]) cylinder(d=2.0, h=oled_pcb[2] + 2);
     }
-    // Twist: encoder body against the lid, board behind
-    color("dimgray") translate([tw_cx - enc_body[0]/2, tw_cs - enc_body[1]/2, -lid_t - enc_body[2]]) cube(enc_body);
-    color("white", 0.6) translate([tw_cx, tw_cs, -lid_t - enc_body[2]]) cylinder(d=6, h=enc_body[2] + 10);
-    color("red", 0.9) translate([tw_cx - tw_w/2, tw_cs - tw_h/2, -lid_t - enc_body[2] - 1.6]) {
-        cube([tw_w, tw_h, 1.6]);
-        translate([3, 3, -back_keepout]) cube([tw_w - 6, tw_h - 6, back_keepout]);
+    // flex tail wrapped round the bottom edge
+    color([0.8, 0.5, 0.1]) translate([win_cx - 6, oled_s0 - 0.6, n_pcb_b - 0.3]) {
+        cube([12, 0.6, oled_pcb[2] + 0.6]);
+        translate([0, 0, oled_pcb[2] + 0.3]) cube([12, glass_s0 - oled_s0 + 0.6, 0.3]);
     }
+    // SMD parts on the back, clear of the header strip
+    color([0.2, 0.2, 0.2]) translate([win_cx - oled_pcb[0]/2 + 2, oled_s0 + 2, n_pcb_b - oled_back])
+        cube([oled_pcb[0] - 4, hdr_s - 2.5 - oled_s0 - 2, oled_back]);
+    // header: solder stubs in front, plastic + pins behind, then the Dupont housings' keep-out
+    for (i = [0:oled_hdr_n - 1]) translate([win_cx + (i - (oled_hdr_n - 1)/2)*2.54, hdr_s, 0]) {
+        color("silver") translate([-0.5, -0.5, n_pcb_f]) cube([1, 1, oled_stub]);
+        color("gold") translate([-0.32, -0.32, n_pcb_b - oled_hdr_h - oled_hdr_pins]) cube([0.64, 0.64, oled_hdr_h + oled_hdr_pins]);
+    }
+    color("black") translate([win_cx - oled_hdr_n*2.54/2, hdr_s - 1.27, n_pcb_b - oled_hdr_h]) cube([oled_hdr_n*2.54, 2.54, oled_hdr_h]);
+    color("orange", 0.35) translate([win_cx - oled_hdr_n*2.54/2 - 1, hdr_s - 2, n_pcb_b - oled_dupont])
+        cube([oled_hdr_n*2.54 + 2, 4, oled_dupont - oled_hdr_h]);
 }
+// EC11: body in its pocket, bushing through the face, washer + nut outside, D shaft
+module comp_enc(shaft=true) slope_frame() translate([enc_cx, enc_cs, 0]) {
+    color([0.75, 0.75, 0.78]) translate([-enc_body[0]/2, -enc_body[1]/2, n_enc - enc_body[2]]) cube(enc_body);
+    color("silver") translate([0, 0, n_enc]) cylinder(d=enc_bush[0], h=enc_bush[1]);
+    if (shaft) color("white", 0.8) translate([0, 0, n_enc]) linear_extrude(enc_shaft_L) intersection() {
+        circle(d=enc_shaft_d);
+        translate([enc_flat - enc_shaft_d/2 - enc_shaft_d, -enc_shaft_d/2]) square(enc_shaft_d);
+    }
+    color("silver") {
+        cylinder(d=enc_washer[0], h=enc_washer[1]);
+        translate([0, 0, enc_washer[1]]) difference() {
+            cylinder(d=enc_nut[0]/cos(30), h=enc_nut[1], $fn=6);
+            translate([0, 0, -1]) cylinder(d=enc_bush[0], h=enc_nut[1] + 2);
+        }
+    }
+    zb = n_enc - enc_body[2];
+    // pins: 3 (A, C, B) on the top edge, 2 (switch) on the bottom edge; side legs
+    color("gold") {
+        for (x = [-2.5, 0, 2.5]) translate([x - 0.4, enc_body[1]/2 - 1.5, zb - enc_pins_L]) cube([0.8, 0.4, enc_pins_L]);
+        for (x = [-2.5, 2.5])    translate([x - 0.4, -enc_body[1]/2 + 1.1, zb - enc_pins_L]) cube([0.8, 0.4, enc_pins_L]);
+        for (sx = [-1, 1]) translate([sx*(enc_body[0]/2 - 0.5) - 0.5, -1.2, zb - 3]) cube([1, 2.4, 3]);
+    }
+    color("orange", 0.35) translate([-enc_body[0]/2, -enc_body[1]/2, zb - enc_pins_L - enc_wires])
+        cube([enc_body[0], enc_body[1], enc_wires]);
+}
+module comp_lid() { comp_oled(); comp_enc(); }
 module components() {
     comp_fan(); comp_filter(); comp_mags_shell(); comp_mags_frame(); comp_inserts();
     comp_floor(); comp_lid();
@@ -484,7 +567,7 @@ module assembled(i, ghosts=true) {
         color([0.85, 0.85, 0.85]) render() frame();
         color([0.93, 0.93, 0.93]) render() pod_lid();
         if (ghosts) components();
-        slope_frame() translate([tw_cx, tw_cs, 1]) color("white", 0.8) knob();
+        color("white", 0.8) knob_placed();
     }
     color([0.79, 0.71, 0.35]) render() base();
     if (ghosts) comp_ballast();
@@ -513,7 +596,18 @@ else if (part == "chk_desk") for (i = [0:2]) intersection() {      // nothing be
     union() { base(); pose(tilts[i]) case_body(); }
     translate([-500, -500, -1000.05]) cube(1000);
 }
-else if (part == "chk_ghosts") intersection() { union() { comp_fan(); comp_floor(); } comp_lid(); }
+else if (part == "chk_ghosts") {     // floor boards vs face parts, and OLED vs encoder
+    intersection() { union() { comp_fan(); comp_floor(); } comp_lid(); }
+    intersection() { comp_oled(); comp_enc(); }
+}
+else if (part == "chk_knob")         // knob vs everything except the shaft it grips
+    intersection() { knob_placed(); union() { case_body(); comp_oled(); comp_enc(shaft=false); } }
+else if (part == "pod_face") {       // close-up of the control face
+    color([0.36, 0.45, 0.52]) render() shell();
+    color([0.93, 0.93, 0.93]) render() pod_lid();
+    comp_lid();
+    color("white", 0.9) knob_placed();
+}
 else if (part == "area_rear_open") rear_open2d();
 else if (part == "area_rear_total") translate([cx, cz]) circle(d=grille_d, $fn=128);
 else if (part == "area_front_open") front_open2d();
@@ -526,7 +620,7 @@ else if (part == "exploded") {
     translate([0, -130, 0]) { color([0.85, 0.85, 0.85]) render() frame(); if (show_components) comp_mags_frame(); }
     slope_frame() translate([0, 0, 45]) slope_inverse() {
         color([0.93, 0.93, 0.93]) render() pod_lid(); if (show_components) comp_lid();
-        slope_frame() translate([tw_cx, tw_cs, 25]) color("white", 0.8) knob();
+        slope_frame() translate([0, 0, 25]) slope_inverse() color("white", 0.8) knob_placed();
     }
     translate([0, 0, -60]) { color([0.79, 0.71, 0.35]) render() base(); if (show_components) translate([0, 0, 25]) comp_ballast(); }
 } else if (part == "assembly") {
