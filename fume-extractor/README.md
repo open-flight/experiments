@@ -94,7 +94,28 @@ arduino-cli monitor -p /dev/cu.usbmodem101 -c baudrate=115200
 
 `CDCOnBoot=cdc` is needed for serial output over the USB-C port. The monitor should show `oled=1 twist=1`.
 
-**Troubleshooting:** on an Apple Silicon Mac without Rosetta, compiling fails with `bad CPU type in executable`, because arduino-cli's bundled `ctags` is x86-only. Install Rosetta with `softwareupdate --install-rosetta` and compile again. If no port appears, use a USB-C data cable, or hold BOOT, tap RESET, and release BOOT before uploading.
+**Troubleshooting:**
+- **`bad CPU type in executable` on Apple Silicon.** arduino-cli's bundled `ctags` is x86-only. Either install Rosetta (`softwareupdate --install-rosetta`), or build a native copy once and point the compiler at it:
+  ```bash
+  git clone --depth 1 https://github.com/arduino/ctags.git ~/src/arduino-ctags
+  (cd ~/src/arduino-ctags && ./configure && make CFLAGS="-O2 -w -include dirent.h")
+  arduino-cli compile --build-property "tools.ctags.path=$HOME/src/arduino-ctags" --fqbn "$FQBN" fume-extractor/firmware/fume_extractor
+  ```
+- **No port appears.** Use a USB-C data cable, or hold BOOT, tap RESET, and release BOOT before uploading.
+
+### Using a generic ESP32 DevKit instead
+
+A classic ESP32 DevKit ("ESP32 Dev Module", ESP32-WROOM-32) works too; the firmware picks its pins automatically when built for that board. Differences from the Thing Plus:
+
+| | Thing Plus ESP32-S3 | ESP32 DevKit |
+|---|---|---|
+| FQBN | `esp32:esp32:sparkfun_esp32s3_thing_plus:CDCOnBoot=cdc` | `esp32:esp32:esp32` |
+| Fan PWM | pad 4 (IO4) | GPIO4 |
+| Fan tach | pad 5 (IO5) | GPIO34 (input-only; the 10 kΩ pull-up is required) |
+| Qwiic | Qwiic port | [Qwiic female jumper cable](https://www.sparkfun.com/flexible-qwiic-cable-female-jumper-4-pin.html?affiliate_code=rfxlS0eYyY): 3V3, GND, SDA → GPIO21, SCL → GPIO22 |
+| Fan 5 V | VUSB | `5V`/`VIN` pin (USB 5 V, usually through a diode, so about 4.7 V; the fan starts at 4 V) |
+
+Many DevKits use a WCH CH340 USB chip. If the board shows up in `system_profiler SPUSBDataType` but no `/dev/cu.wchusbserial*` port appears, install WCH's CH34x macOS driver and allow it in System Settings → Privacy & Security. The case is sized for the Thing Plus, so a DevKit build is for bench testing.
 
 ---
 

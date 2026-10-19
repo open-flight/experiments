@@ -71,8 +71,10 @@ static void draw(uint32_t rpm, bool stall, bool dim) {
 
 void setup() {
   Serial.begin(115200);
-  pinMode(PIN_QWIIC_PWR, OUTPUT);
-  digitalWrite(PIN_QWIIC_PWR, HIGH);
+  if (PIN_QWIIC_PWR >= 0) {
+    pinMode(PIN_QWIIC_PWR, OUTPUT);
+    digitalWrite(PIN_QWIIC_PWR, HIGH);
+  }
   delay(50);
   Wire.begin();
 

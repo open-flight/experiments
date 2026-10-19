@@ -26,6 +26,8 @@ The same circuit as text:
    Qwiic ──► OLED ──► Twist   (chain; IO45 powers the Qwiic rail)
 ```
 
+Using a generic ESP32 DevKit instead of the Thing Plus? Same circuit, different pins: PWM = GPIO4, tach = GPIO34, fan +5 V from the `5V`/`VIN` pin, and the OLED/Twist on a Qwiic jumper cable to 3V3, GND, GPIO21 (SDA), GPIO22 (SCL). See [the README](../README.md#using-a-generic-esp32-devkit-instead).
+
 Pad naming: pads are named by raw ESP32 IO number (SparkFun's hardware overview says the
 PTH pads are labeled that way). Arduino's `GPIO3`/`GPIO4` aliases are a different scheme
 (GPIO3 = IO5) and are not used. Silkscreen text and header position (left/right, Nth from
