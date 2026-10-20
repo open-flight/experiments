@@ -28,9 +28,9 @@ openscad -D 'part="box"' -o stl/box.stl bench_case.scad
 
 Place the parts first, then make the joins on the underside (the grey lines in the picture) with clipped legs or bare wire:
 
-1. **10 kΩ** from A2 to A6.
-2. **1 kΩ** from C2 to C6.
-3. **100 kΩ** from D7 to D10. Stand it on end if your resistor is too long for 3 holes.
+1. **10 kΩ** (8.2 kΩ is fine) from A2 to A6.
+2. **1 kΩ** (1–2.2 kΩ; 1.5 kΩ is fine) from C2 to C6.
+3. **100 kΩ** (anything from 15 kΩ to 100 kΩ) from D7 to D10. Stand it on end if your resistor is too long for 3 holes.
 4. **2N3904** in E6 (E), E7 (B) and E8 (C), with the flat side toward row H.
 5. Underside joins:
    - A1–A2 (3V3)
@@ -59,6 +59,12 @@ Place the parts first, then make the joins on the underside (the grey lines in t
 | 11 | encoder **C** (middle) | DevKit **GND** |
 | 12 | encoder SW (either pin) | DevKit **GPIO27** |
 | 13 | encoder SW (other pin) | DevKit **GND** |
+| 14 | OLED **GND** | DevKit **GND** |
+| 15 | OLED **VCC** | DevKit **3V3** |
+| 16 | OLED **SCL** | DevKit **GPIO22** |
+| 17 | OLED **SDA** | DevKit **GPIO21** |
+
+Fan wire colours (Noctua): black = pin 1 GND, yellow = pin 2 +5 V, green = pin 3 tach, blue = pin 4 PWM.
 
 Before you plug in USB, put a multimeter on continuity and check that **5V–GND** and **3V3–GND** don't beep.
 

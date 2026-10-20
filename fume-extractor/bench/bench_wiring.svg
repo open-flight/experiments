@@ -1,11 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 700" width="1100" height="700" font-family="Helvetica, Arial, sans-serif" font-size="13">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 790" width="1100" height="790" font-family="Helvetica, Arial, sans-serif" font-size="13">
   <title>Bench wiring</title>
-  <rect width="1100" height="700" fill="#ffffff"/>
-  <text x="550" y="34" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">Bench wiring: ESP32 DevKit + EC11 encoder + 2N3904 on perfboard</text>
+  <rect width="1100" height="790" fill="#ffffff"/>
+  <text x="550" y="34" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">Bench wiring: ESP32 DevKit + EC11 encoder + 0.96" OLED + 2N3904 on perfboard</text>
   <text x="550" y="56" text-anchor="middle" font-size="12" fill="#666">Match DevKit pins by their printed label (pin order differs between boards). Any GND pin works.</text>
 
   <!-- ===== DevKit ===== -->
-  <rect x="60" y="100" width="240" height="525" rx="10" fill="#1f5f99" stroke="#123a5e" stroke-width="2"/>
+  <rect x="60" y="100" width="240" height="650" rx="10" fill="#1f5f99" stroke="#123a5e" stroke-width="2"/>
   <text x="180" y="128" text-anchor="middle" font-weight="bold" fill="#fff">ESP32 DevKit</text>
   <text x="180" y="146" text-anchor="middle" font-size="11" fill="#cfe2f5">(only the pins used)</text>
   <rect x="44" y="340" width="22" height="34" rx="6" fill="#bbb" stroke="#555"/>
@@ -22,12 +22,17 @@
     <text x="288" y="545">GPIO33</text>
     <text x="288" y="585">GPIO27</text>
     <text x="288" y="605">GND</text>
+    <text x="288" y="655">GND</text>
+    <text x="288" y="680">3V3</text>
+    <text x="288" y="705">GPIO22</text>
+    <text x="288" y="730">GPIO21</text>
   </g>
   <g fill="#ffd34d" stroke="#222">
     <circle cx="300" cy="170" r="5"/><circle cx="300" cy="200" r="5"/><circle cx="300" cy="260" r="5"/>
     <circle cx="300" cy="380" r="5"/><circle cx="300" cy="420" r="5"/><circle cx="300" cy="490" r="5"/>
     <circle cx="300" cy="515" r="5"/><circle cx="300" cy="540" r="5"/><circle cx="300" cy="580" r="5"/>
     <circle cx="300" cy="600" r="5"/>
+    <circle cx="300" cy="650" r="5"/><circle cx="300" cy="675" r="5"/><circle cx="300" cy="700" r="5"/><circle cx="300" cy="725" r="5"/>
   </g>
 
   <!-- ===== Perfboard (holes: cols 1-10 at x=430..700, rows A-H at y=170..380) ===== -->
@@ -70,11 +75,11 @@
     <line x1="610" y1="260" x2="700" y2="260"/>
   </g>
   <rect x="488" y="162" width="64" height="16" rx="5" fill="#e8d2a6" stroke="#333" stroke-width="1.5"/>
-  <text x="520" y="174" text-anchor="middle" font-size="11" fill="#222">10 kΩ</text>
+  <text x="520" y="174" text-anchor="middle" font-size="11" fill="#222">8.2 kΩ</text>
   <rect x="488" y="222" width="64" height="16" rx="5" fill="#e8d2a6" stroke="#333" stroke-width="1.5"/>
-  <text x="520" y="234" text-anchor="middle" font-size="11" fill="#222">1 kΩ</text>
+  <text x="520" y="234" text-anchor="middle" font-size="11" fill="#222">1.5 kΩ</text>
   <rect x="625" y="252" width="60" height="16" rx="5" fill="#e8d2a6" stroke="#333" stroke-width="1.5"/>
-  <text x="655" y="264" text-anchor="middle" font-size="11" fill="#222">100 kΩ</text>
+  <text x="655" y="264" text-anchor="middle" font-size="11" fill="#222">15–100 kΩ</text>
 
   <!-- 2N3904 (flat side toward the bottom of the picture) -->
   <path d="M566,303 L654,303 L654,284 Q654,266 610,266 Q566,266 566,284 Z" fill="#222"/>
@@ -84,13 +89,13 @@
   </g>
 
   <!-- ===== Fan ===== -->
-  <rect x="820" y="140" width="190" height="300" rx="10" fill="#7a4e2d" stroke="#4d2f19" stroke-width="2"/>
-  <text x="915" y="128" text-anchor="middle" font-weight="bold" fill="#222">Noctua NF-A12x25 5V PWM</text>
+  <rect x="820" y="140" width="230" height="300" rx="10" fill="#7a4e2d" stroke="#4d2f19" stroke-width="2"/>
+  <text x="935" y="128" text-anchor="middle" font-weight="bold" fill="#222">Noctua NF-A12x25 5V PWM</text>
   <g fill="#fff">
-    <text x="834" y="175">pin 3 · TACH</text>
-    <text x="834" y="325">pin 4 · PWM</text>
-    <text x="834" y="385">pin 1 · GND</text>
-    <text x="834" y="425">pin 2 · +5 V</text>
+    <text x="834" y="175">pin 3 · TACH (green)</text>
+    <text x="834" y="325">pin 4 · PWM (blue)</text>
+    <text x="834" y="385">pin 1 · GND (black)</text>
+    <text x="834" y="425">pin 2 · +5 V (yellow)</text>
   </g>
   <g fill="#ffd34d" stroke="#222">
     <circle cx="820" cy="170" r="5"/><circle cx="820" cy="320" r="5"/><circle cx="820" cy="380" r="5"/><circle cx="820" cy="420" r="5"/>
@@ -129,6 +134,24 @@
   <!-- tach node now spans A6..A9 -->
   <line x1="640" y1="170" x2="670" y2="170" stroke="#8a8a8a" stroke-width="6" stroke-linecap="round" opacity="0.85"/>
 
+
+  <!-- ===== OLED ===== -->
+  <rect x="480" y="630" width="150" height="110" rx="6" fill="#1b4f8f" stroke="#0f2f55" stroke-width="2"/>
+  <rect x="512" y="650" width="104" height="72" rx="3" fill="#111"/>
+  <text x="564" y="690" text-anchor="middle" font-size="12" fill="#9ad1ff">0.96" OLED</text>
+  <text x="564" y="706" text-anchor="middle" font-size="10" fill="#9ad1ff">SSD1306 · 0x3C</text>
+  <g fill="#fff" font-size="10">
+    <text x="488" y="654">GND</text><text x="488" y="679">VCC</text><text x="488" y="704">SCL</text><text x="488" y="729">SDA</text>
+  </g>
+  <g fill="#ffd34d" stroke="#222">
+    <circle cx="480" cy="650" r="5"/><circle cx="480" cy="675" r="5"/><circle cx="480" cy="700" r="5"/><circle cx="480" cy="725" r="5"/>
+  </g>
+  <g fill="none" stroke-width="3.5">
+    <line x1="300" y1="650" x2="480" y2="650" stroke="#111"/>
+    <line x1="300" y1="675" x2="480" y2="675" stroke="#f08c00"/>
+    <line x1="300" y1="700" x2="480" y2="700" stroke="#0ca678"/>
+    <line x1="300" y1="725" x2="480" y2="725" stroke="#e64980"/>
+  </g>
   <!-- ===== Legend ===== -->
   <g font-size="12" fill="#333">
     <rect x="760" y="470" width="320" height="200" rx="8" fill="#f7f7f7" stroke="#ddd"/>
