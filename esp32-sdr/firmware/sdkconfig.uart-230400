@@ -1,0 +1,2 @@
+# ESP-SDR overlay: drop the UART to 230400 so CH340 boards (1a86:7522) read cleanly on macOS.
+CONFIG_ESP_SDR_UART_BAUD=230400

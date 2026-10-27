@@ -1,0 +1,44 @@
+diff --git a/app.js b/app.js
+index 8199730..737f21e 100644
+--- a/app.js
++++ b/app.js
+@@ -640,7 +640,7 @@ function state() {
+ }
+ function updateConnectionControls() {
+   $('baudStatus').hidden = !connected || radio.transport !== 'UART';
+-  $('baudStatus').textContent = radio.transport === 'UART' ? `${radio.baudRate / 1000000} MBaud` : '';
++  $('baudStatus').textContent = radio.transport === 'UART' ? (radio.baudRate >= 1000000 ? `${radio.baudRate / 1000000} MBaud` : `${radio.baudRate / 1000} kBaud`) : '';
+   $('connect').disabled = connectionBusy || !!radio.changingBaud || !!radio.changingGpio;
+   $('openOther').disabled = connected || $('connect').disabled || !navigator.serial;
+   $('openUSB').disabled = connected || $('connect').disabled || !navigator.usb;
+diff --git a/radio.js b/radio.js
+index 5452d2c..0185b08 100644
+--- a/radio.js
++++ b/radio.js
+@@ -242,7 +242,7 @@ class BurstSerialRadio {
+     this.captureSamples = null;
+     this.droppedCaptures = 0;
+     this.spectrumCrcErrors = 0;
+-    this.baudRate = 2000000;
++    this.baudRate = 230400;
+     this.transport = null;
+     this.supportsBaudChange = false;
+     this.changingBaud = false;
+@@ -462,7 +462,7 @@ class BurstSerialRadio {
+     // Only an initial connection resets the board. A baud switch must preserve
+     // the running firmware and its volatile UART rate.
+     const rates =
+-      port.getInfo?.().usbVendorId === 0x303a ? [baudRate] : [...new Set([baudRate, 2000000, 1000000])];
++      port.getInfo?.().usbVendorId === 0x303a ? [baudRate] : [...new Set([baudRate, 230400, 2000000, 1000000])];
+     let failure;
+     for (const rate of rates) {
+       try {
+@@ -483,7 +483,7 @@ class BurstSerialRadio {
+     }
+     throw failure;
+   }
+-  async connect({ baudRate = 2000000, port = null } = {}) {
++  async connect({ baudRate = 230400, port = null } = {}) {
+     if (!port && !SerialConnection.supported())
+       throw Error('WebSerial or WebUSB support is required in this browser.');
+     if (!isSecureContext) throw Error('Serve this page over HTTPS or localhost.');
